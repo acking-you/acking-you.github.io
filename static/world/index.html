@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StaticFlow 漫游志</title>
+    <meta name="description" content="开车逛 ackingliu 的博客，沿途阅读文章、试听音乐、参加计时赛。">
+
+    <link rel="icon" href="./favicon.ico">
+    <link rel="preload" href="./respawns/respawnsReferences-compressed.glb" as="fetch" crossorigin>
+    <link rel="preload" href="./behindTheScene/stars.ktx" as="fetch" crossorigin>
+    <link rel="preload" href="./intro/sound.ktx" as="fetch" crossorigin>
+    <link rel="preload" href="./palette.ktx" as="fetch" crossorigin>
+    
+    
+  <script type="module" crossorigin src="./assets/index-Bco755bQ.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-XKyaHtl9.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-BbjyjXnE.css">
+</head>
+<body>
+    <nav class="world-navigation" aria-label="世界导航">
+        <a class="world-return" href="../../" aria-label="返回 StaticFlow 博客首页">
+            <span class="arrow" aria-hidden="true">←</span> 返回博客
+        </a>
+        <button type="button" data-world-fullscreen hidden aria-label="进入全屏" title="进入全屏 (Alt + Enter)" aria-keyshortcuts="Alt+Enter">
+            <i class="screen-corners" aria-hidden="true"></i>
+        </button>
+        <button type="button" data-driving-view aria-label="第一人称驾驶" aria-pressed="false" title="切换第一人称与俯视驾驶">
+            第一人称 <kbd data-camera-key aria-hidden="true">C</kbd>
+        </button>
+        <span class="screen-feedback" role="status" hidden></span>
+    </nav>
+    <section class="world-brief" aria-labelledby="world-title">
+        <h1 id="world-title">StaticFlow 漫游志</h1>
+        <p id="world-status" role="status">正在接入未来道具实验室…</p>
+        <p class="screen-hint">推荐全屏驾驶。<span>按 <kbd>Alt</kbd> + <kbd>Enter</kbd> 切换全屏。</span></p>
+        <div class="world-entry-actions">
+            <button id="world-fullscreen" type="button" aria-keyshortcuts="Alt+Enter"><i class="screen-corners" aria-hidden="true"></i><span>全屏驾驶</span></button>
+            <button id="world-drive" type="button" hidden title="使用窗口模式开始驾驶">开始驾驶</button>
+        </div>
+        <p class="screen-feedback" role="status" hidden></p>
+        <button id="world-retry" type="button" hidden onclick="location.reload()">重新载入</button>
+        <noscript><p>请启用 JavaScript 进入 3D 世界。</p></noscript>
+    </section><script>
+// Embedded beside the launch controls so fullscreen runs in the original
+// gesture, even if the renderer and the blog catalog are still loading.
+(() => {
+    const root = document.documentElement
+    const launch = document.getElementById('world-fullscreen')
+    const launchLabel = launch.querySelector('span')
+    const drive = document.getElementById('world-drive')
+    const toggle = document.querySelector('[data-world-fullscreen]')
+    const hint = document.querySelector('.screen-hint')
+    const feedback = document.querySelectorAll('.screen-feedback')
+    const enter = root.requestFullscreen || root.webkitRequestFullscreen
+    const leave = document.exitFullscreen || document.webkitExitFullscreen
+    const supported = Boolean(enter && leave && (document.fullscreenEnabled ?? document.webkitFullscreenEnabled ?? true))
+    const active = () => Boolean(document.fullscreenElement || document.webkitFullscreenElement)
+    const returnToDriving = () => window.dispatchEvent(new Event('world-driving-focus'))
+    let startWhenReady = false
+    let pending = false
+
+    function report(text) {
+        for (const node of feedback) {
+            node.textContent = text
+            node.hidden = !text
+        }
+    }
+
+    function render() {
+        const full = active()
+        const title = full ? '退出全屏' : '进入全屏'
+        toggle.hidden = !supported
+        toggle.disabled = pending
+        toggle.setAttribute('aria-label', title)
+        toggle.title = title + ' (Alt + Enter)'
+        toggle.setAttribute('aria-pressed', String(full))
+        launch.disabled = !supported || pending || (full && startWhenReady)
+        launchLabel.textContent = full && startWhenReady ? '已全屏，载入后出发' : '全屏驾驶'
+    }
+
+    function startIfReady() {
+        if (!startWhenReady || !active() || drive.hidden || root.classList.contains('world-entered')) return
+        startWhenReady = false
+        drive.click()
+    }
+
+    function denied() {
+        startWhenReady = false
+        report(root.classList.contains('world-entered') ? '浏览器未允许切换全屏。' : '浏览器未允许全屏，可选择「开始驾驶」使用窗口模式。')
+        render()
+    }
+
+    async function change(fromLaunch = false) {
+        if (pending || !supported || root.classList.contains('world-failed')) return
+        const full = active()
+        startWhenReady = !root.classList.contains('world-entered') && (!full || fromLaunch)
+        report('')
+        if (full && fromLaunch) { startIfReady(); render(); return }
+        pending = true
+        try {
+            if (full) await leave.call(document)
+            else await enter.call(root)
+            startIfReady()
+        } catch {
+            denied()
+        } finally {
+            pending = false
+            render()
+        }
+    }
+
+    function changed() {
+        if (!active()) startWhenReady = false
+        report('')
+        render()
+        startIfReady()
+        if (root.classList.contains('world-entered')) returnToDriving()
+    }
+
+    launch.addEventListener('click', () => change(true))
+    drive.addEventListener('click', () => {
+        startWhenReady = false
+        report('')
+    })
+    // Keep a pointer press on the HUD from taking the next driving key.
+    // Fullscreen transitions may finish several frames after the click.
+    toggle.addEventListener('pointerdown', event => {
+        if (event.button === 0) event.preventDefault()
+    })
+    toggle.addEventListener('click', event => {
+        const transition = change()
+        if (event.detail) {
+            returnToDriving()
+            transition.then(returnToDriving)
+        }
+    })
+    window.addEventListener('world-drive-ready', startIfReady)
+    window.addEventListener('world-fullscreen-shortcut', () => change())
+    window.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' || !event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing) return
+        if (document.querySelector('dialog[open]') || event.target.closest?.('input,textarea,select,[contenteditable]:not([contenteditable=false])')) return
+        if (!supported) return
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        if (!event.repeat) change()
+    }, true)
+    document.addEventListener('fullscreenchange', changed)
+    document.addEventListener('webkitfullscreenchange', changed)
+    document.addEventListener('webkitfullscreenerror', denied)
+    if (!supported) {
+        hint.textContent = '当前浏览器不支持网页全屏，可使用窗口模式驾驶。'
+    }
+    render()
+})()
+
+</script>
+
+    <div class="js-fonts-loader fonts-loader">
+        <div class="font nunito" data-font="400 20px Nunito"> </div>
+        <div class="font amatic-sc" data-font="700 20px 'Amatic SC'"> </div>
+        <div class="font pally" data-font="500 20px Pally-Medium"> </div>
+    </div>
+    
+    <div class="game">
+
+        <canvas aria-label="可驾驶的博客 3D 世界" class="js-canvas"></canvas>
+
+        <!-- Touch buttons -->
+        <div class="js-touch-buttons touch-buttons">
+            <div class="js-overlay overlay"></div>
+            <div class="list">
+                <button data-name="interact" class="js-button interact">互动</button>
+                <button data-name="unstuck" class="js-button unstuck">脱困</button>
+                <button aria-label="上一项" data-name="previous" class="js-button previous"></button>
+                <button aria-label="下一项" data-name="next" class="js-button next"></button>
+                <button aria-label="打开" data-name="open" class="js-button open"></button>
+                <button aria-label="关闭" data-name="close" class="js-button close"></button>
+            </div>
+        </div>
+
+        <!-- Menu trigger -->
+        <button aria-label="打开驾驶手册" title="驾驶手册" class="js-menu-trigger menu-trigger">
+            <div class="button-inner">
+                <div class="icon-container">
+                    <div class="icon">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </div>
+        </button>
+
+        <!-- Map trigger -->
+        <button aria-label="打开地图" title="地图 (M)" class="js-map-trigger map-trigger">
+            <div class="button-inner">
+                <div class="icon-container">
+                    <img class="map-icon" src="ui/map.svg" loading="lazy">
+                </div>
+            </div>
+        </button>
+
+        <!-- Menu -->
+        <div class="js-menu menu">
+
+            <div class="inner">
+
+                <button aria-label="关闭" class="js-close close">
+                    <div class="button-inner">
+                        <div class="icon-container">
+                            <img class="icon is-default" src="ui/close.svg" loading="lazy">
+                            <span class="icon is-xbox">A</span>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="js-navigation navigation">
+
+                    <!-- Intro -->
+                    <button class="js-navigation-item item" data-name="home" title="驾驶营地" aria-label="驾驶营地">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/home.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Intro -->
+                    <button class="js-navigation-item item" data-name="options" title="设置" aria-label="设置">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/gear.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Controls -->
+                    <button class="js-navigation-item item" data-name="controls" title="驾驶指南" aria-label="驾驶指南">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/controls/gamepad.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Achievements -->
+                    <button class="js-navigation-item item" data-name="achievements" title="探索成就" aria-label="探索成就">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/medal.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Circuit -->
+                    <button class="js-navigation-item item" data-name="circuit" title="赛道" aria-label="赛道">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/wheel.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Whispers -->
+                    <button class="js-navigation-item item" data-name="whispers" title="D-Mail 留言" aria-label="D-Mail 留言">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/whispers/whisper-fill.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Behind the scene -->
+                    <button class="js-navigation-item item" data-name="behindTheScene" title="阅读室" aria-label="阅读室">
+                        <div class="button-inner">
+                            <div class="icon-container">
+                                <img src="ui/question.svg" loading="lazy">
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="container">
+
+                    <div class="previews js-previews">
+
+                        <!-- Intro -->
+                        <div class="js-preview preview home-preview">
+                            <img class="background" src="ui/previews/home.webp" loading="lazy" draggable="false">
+                        </div>
+
+                        <!-- Options -->
+                        <div class="js-preview preview options-preview">
+                            <img class="background" src="ui/previews/home.webp" loading="lazy" draggable="false">
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="js-preview preview controls-preview">
+                            <img class="background" src="ui/previews/controls.webp" loading="lazy" draggable="false">
+                        </div>
+
+                        <!-- Achievements -->
+                        <div class="js-preview preview achievements-preview">
+                            <img class="background" src="ui/previews/achievements.webp" loading="lazy" draggable="false">
+                        </div>
+
+                        <!-- Circuit -->
+                        <div class="js-preview preview circuit-preview">
+                            <img class="background" src="ui/previews/circuit.webp" loading="lazy" draggable="false">
+                        </div>
+
+                        <!-- Whispers -->
+                        <div class="js-preview preview whispers-preview">
+                            <img class="background" src="ui/previews/whispers.webp" loading="lazy" draggable="false">
+                            <div class="js-preview-message message title"> <span class="js-text text" contenteditable="">在这里留言</span><div class="js-flag flag"></div> </div>
+                        </div>
+
+                        <!-- Behind the scene -->
+                        <div class="js-preview preview behindTheScene-preview">
+                            <img class="background" src="ui/previews/behindTheScene.webp" loading="lazy" draggable="false">
+                        </div>
+
+                    </div>
+
+                    <div class="contents js-contents">
+                        <!-- Intro -->
+                        <div class="js-content content home-content">
+                            <div class="content-inner">
+                                <div class="title">驾驶营地</div>
+    <p class="text">实验室收到了一封缺页的 D-Mail。在观测站调谐 α，你能从文章工坊的 IBN 5100 读到旧档案；调谐 β，广播会馆会收到另一段录音。你会记得两条世界线发生过的事。</p>
+    <p class="text">用 <span data-driving-keys>W A S D</span> 或方向键驾驶，靠近标记后按回车。按 <kbd data-camera-key>C</kbd> 或点左上角「第一人称」切换视角。触屏上可单指拖动，轻点浮出的按钮互动。打开地图，选择地名即可传送。</p>
+    <p class="text">当前变动率 <output data-observatory-reading></output>。地图上的发光标记指向下一处收信地点。</p>
+    <nav class="world-links text" aria-label="博客馆藏">
+        <a href="../../posts">浏览知识库 ↗</a><a href="../../media/audio">进入曲库 ↗</a>
+    </nav>
+    <div data-sf-articles></div>
+                            </div>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="js-content content options-content">
+                            <div class="content-inner">
+                                <div class="title">驾驶设置</div>
+                                <table class="options">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                声音 
+                                            </td>
+                                            <td>
+                                                <button class="js-audio-toggle audio-toggle button is-small has-tooltip">
+                                                    <div class="tooltip">打开或关闭声音</div>
+                                                    <img class="icon icon-audio audio-on" src="ui/audio/audioOn.svg" loading="lazy">
+                                                    <img class="icon icon-audio audio-off" src="ui/audio/audioOff.svg" loading="lazy">
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                画质 
+                                            </td>
+                                            <td>
+                                                <button class="js-quality-toggle quality-toggle button is-small has-tooltip">
+                                                    <div class="tooltip">切换画面特效</div>
+                                                    <span>低</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                车辆脱困
+                                            </td>
+                                            <td>
+                                                <button class="js-respawn button is-small has-tooltip">
+                                                    <div class="tooltip">回到最近的重生点</div>
+                                                    回到重生点
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                复位
+                                            </td>
+                                            <td>
+                                                <button class="js-reset button is-small has-tooltip">
+                                                    <div class="tooltip">将所有物件复位</div>
+                                                    复位
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                渲染器
+                                            </td>
+                                            <td>
+                                                <button class="js-renderer button is-small is-disabled is-success has-tooltip">
+                                                    <div class="js-tooltip tooltip">当前使用 WebGPU 渲染</div>
+                                                    <span>WebGPU</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                世界服务
+                                            </td>
+                                            <td>
+                                                <button class="js-server button is-small is-disabled has-tooltip">
+                                                    <div class="js-tooltip tooltip"></div>
+                                                    <span>正在连接</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="js-content content controls-content"><button type="button" class="binding-launch" data-open-bindings>设置快捷键</button>
+                            <div class="content-inner">
+                                <div class="js-tabs tabs">
+                                    <div class="js-tabs-navigation tabs-navigation">
+                                        <button class="js-tabs-navigation-item tab" data-tabs-name="mouse-keyboard">
+                                            <div class="active-background"></div>
+                                            <span class="icon-container">
+                                                <span class="icon icon-mouse-keyboard"></span>
+                                            </span>
+                                            <span class="label">键盘鼠标</span>
+                                        </button>
+                                        <button class="js-tabs-navigation-item tab" data-tabs-name="touch">
+                                            <div class="active-background"></div>
+                                            <span class="icon-container">
+                                                <span class="icon icon-touch"></span>
+                                            </span>
+                                            <span class="label">触摸屏</span>
+                                        </button>
+                                        <button class="js-tabs-navigation-item tab" data-tabs-name="gamepad">
+                                            <div class="active-background"></div>
+                                            <span class="icon-container">
+                                                <span class="icon icon-gamepad"></span>
+                                            </span>
+                                            <span class="label">手柄</span>
+                                        </button>
+                                    </div>
+                                    <div class="js-tabs-content text text-small tabs-content">
+
+                                        <!-- Mouse / Keyboard -->
+                                        <div class="js-tabs-content-item tabs-content-item mouse-keyboard" data-tabs-name="mouse-keyboard" data-tabs-default>
+                                            <div class="js-tabs-content-inner list">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><span class="key" data-driving-keys>W A S D</span> 或 <span class="key">ARROWS</span></td>
+                                                            <td>驾驶</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">SHIFT</span></td>
+                                                            <td>加速</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">CTRL LEFT</span> 或 <span class="key">B</span></td>
+                                                            <td>刹车</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">SPACE</span></td>
+                                                            <td>跳跃</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">ENTER</span></td>
+                                                            <td>互动</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">M</span></td>
+                                                            <td>地图</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">L</span></td>
+                                                            <td>静音</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">T</span></td>
+                                                            <td>留下路边留言</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">R</span></td>
+                                                            <td>回到重生点</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">NUM KEYS</span>/<span class="key">NUM PAD</span></td>
+                                                            <td>控制悬挂</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">LEFT CLICK (DRAG)</span></td>
+                                                            <td>移动视角</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">H</span></td>
+                                                            <td>鸣笛</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Mobile / Tablet -->
+                                        <div class="js-tabs-content-item tabs-content-item touch" data-tabs-name="touch">
+                                            <div class="js-tabs-content-inner list">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><span class="key">单指拖动</span></td>
+                                                            <td>驾驶</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">双指</span></td>
+                                                            <td>移动视角或缩放</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">轻点小车</span></td>
+                                                            <td>跳跃</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Gamepad -->
+                                        <div class="js-tabs-content-item tabs-content-item gamepad" data-tabs-name="gamepad">
+                                            <div class="js-tabs-content-inner list">
+                                            
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">B</span>
+                                                                <span class="is-gamepad-button is-playstation is-icon circle"></span>
+                                                            </td>
+                                                            <td>加速</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">Y</span>
+                                                                <span class="is-gamepad-button is-playstation is-icon triangle"></span>
+                                                            </td>
+                                                            <td>跳跃</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">X</span>
+                                                                <span class="is-gamepad-button is-playstation is-icon square"></span>
+                                                            </td>
+                                                            <td>刹车</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">A</span>
+                                                                <span class="is-gamepad-button is-playstation is-icon cross"></span>
+                                                            </td>
+                                                            <td>互动或退出</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">RT</span>
+                                                                <span class="is-gamepad-button is-playstation key">R2</span>
+                                                            </td>
+                                                            <td>前进</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">LT</span>
+                                                                <span class="is-gamepad-button is-playstation key">L2</span>
+                                                            </td>
+                                                            <td>倒车</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span class="is-gamepad-button is-xbox key">LB / RB</span>
+                                                                <span class="is-gamepad-button is-playstation key">L1 / R1</span>
+                                                            </td>
+                                                            <td>悬挂</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">左摇杆</span></td>
+                                                            <td>转向</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">按下左摇杆</span></td>
+                                                            <td>鸣笛</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">右摇杆</span></td>
+                                                            <td>移动视角</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">按下右摇杆</span></td>
+                                                            <td>轻按切换驾驶视角，按住缩放俯视图</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">Select</span></td>
+                                                            <td>复位</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="key">Start</span></td>
+                                                            <td>暂停</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Achievements -->
+                        <div class="js-content content achievements-content">
+                            <div class="content-inner">
+                                <div class="title">探索成就</div>
+                                <div class="js-global-progress global-progress">
+                                    <span class="ratio"><span class="js-current current"></span> / <span class="js-total total"></span></span>
+                                    <span class="js-time time">2h 30min 15s</span>
+                                </div>
+                                <div class="rewards-container">
+                                    <div class="title">解锁涂装</div>
+                                    <div class="rewards">
+                                        <button class="js-reward reward has-tooltip" data-name="red" data-default>
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/red.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                        <button class="js-reward reward has-tooltip is-locked" data-name="orange">
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/orange.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                        <button class="js-reward reward has-tooltip is-locked" data-name="white">
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/white.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                        <button class="js-reward reward has-tooltip is-locked" data-name="black">
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/black.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                        <button class="js-reward reward has-tooltip is-locked" data-name="flames">
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/flames.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                        <button class="js-reward reward has-tooltip is-locked" data-name="abyssal">
+                                            <div class="js-tooltip tooltip">所需成就 <strong></strong></div>
+                                            <img class="picture" src="ui/achievements/rewards/abyssal.webp" loading="lazy">
+                                            <div class="lock">
+                                                <img class="lock-icon" src="ui/lock.svg" loading="lazy">
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="js-items items"></div>
+
+                                <div class="horizontal-group">
+                                
+                                    <button class="js-button-reset button button-reset">
+                                        清除探索记录
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Circuit -->
+                        <div class="js-content content circuit-content">
+                            <div class="content-inner">
+                                <div class="title">赛道排行榜</div>
+                                
+                                <p class="offline-element text text-danger">
+                                    <img src="ui/warning.svg" loading="lazy" alt="" class="icon"> 当前为单人模式。圈速仅在本次驾驶中显示。
+                                </p>
+
+                                <div class="js-leaderboard-container leaderboard-container has-no-score">
+                                    <div class="no-score">今天还没有圈速记录</div>
+                                    <table class="js-leaderboard leaderboard online-element">
+                                        <tbody>
+                                        </tbody>
+                                    
+                                    </table>
+
+                                    <p class="online-element reset">
+                                        距离下一次重置 <span class="js-reset-time reset-time"></span>
+                                    </p>
+
+                                </div>
+
+                                <div class="js-racing-buttons racing-buttons horizontal-group">
+                                
+                                    <button class="js-button-restart button">
+                                        <svg class="icon icon-restart" width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M17 5L10 10V6C5.58172 6 2 9.58172 2 14C2 18.4183 5.58172 22 10 22C14.4183 22 18 18.4183 18 14H20C20 19.5228 15.5228 24 10 24C4.47715 24 0 19.5228 0 14C0 8.47715 4.47715 4 10 4V0L17 5Z" fill="#ffffff"/>
+                                        </svg>
+                                        重新起跑
+                                    </button>
+                                
+                                    <button class="js-button-end button">
+                                        <svg class="icon icon-flag" class="none" width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.551758 1.7258C6.55166 -2.27398 11.0001 3.40978 19 1.40953L23 13.4096C15.5952 15.2611 11.6175 10.2589 6.30859 12.6762L8.44824 19.0941L6.55176 19.7269L0.551758 1.7258ZM5.26562 2.00328C4.68209 2.01685 4.07959 2.11674 3.42871 2.37242L6.16309 10.5746C7.17704 10.2014 8.1765 10.0274 9.17188 10.0043C10.8337 9.96566 12.395 10.3531 13.7764 10.7299C15.9783 11.3304 17.9741 11.9562 20.3564 11.806L17.6533 3.69664C13.9491 4.17921 11.0237 3.21654 8.72363 2.58922C7.3553 2.21603 6.29108 1.97952 5.26562 2.00328Z" fill="#ffffff"/>
+                                        </svg>
+                                        结束比赛
+                                    </button>
+                                
+                                    <button class="js-button-controls button">
+                                        <svg class="icon icon-controller" width="34" height="22" viewBox="0 0 34 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M24.9901 0C27.2187 0 29.1912 1.98468 30.0877 3.96582C30.9844 5.94795 33.3919 15.0915 33.9373 17.4551C34.4824 19.8185 30.7556 22.1815 26.5741 22.1816C24.3923 19.6363 22.2847 16.7432 19.8465 15H14.2235C11.7707 16.7432 9.6507 19.6363 7.4559 22.1816C3.24927 22.1816 -0.494655 19.8185 0.053558 17.4551C0.602246 15.0917 3.02451 5.94816 3.9266 3.96582C4.82847 1.98469 6.81257 0.000114396 9.05453 0H24.9901ZM8.85532 2.01074C8.38039 2.06286 7.8363 2.30078 7.27133 2.77344C6.62835 3.31144 6.08313 4.05636 5.74692 4.79492C5.3762 5.61 4.5895 8.20768 3.78403 11.1035C3.19639 13.2162 2.63705 15.345 2.28207 16.7588L2.0018 17.9072C1.9553 18.1081 1.96994 18.5603 2.69711 19.124C3.29365 19.5864 5.2646 20.0018 6.56332 20.1357C6.88401 19.7496 7.20912 19.3522 7.54086 18.9434C8.08227 18.2761 8.64694 17.5798 9.22153 16.9062C10.36 15.5716 11.6783 14.3885 13.1112 13.3701L13.6307 13H20.534L21.0555 13.373C22.4808 14.3921 23.7002 15.5757 24.8319 16.9102C25.4031 17.5837 25.9636 18.2811 26.5018 18.9482C26.83 19.3551 27.1523 19.7504 27.4696 20.1348C28.7512 20 30.7095 19.5872 31.2987 19.1279C32.0175 18.5673 32.0359 18.1133 31.9881 17.9053L31.7098 16.7559C31.3569 15.3419 30.8007 13.2132 30.2166 11.1006C29.4159 8.20421 28.6341 5.60492 28.2655 4.79004C27.9309 4.05089 27.3888 3.30754 26.7508 2.77051C26.1096 2.23085 25.4989 2 24.9901 2H9.05453L8.85532 2.01074ZM12.0096 7H14.0096V9H12.0096V11H10.0096V9H8.00961V7H10.0096V5H12.0096V7ZM24.0096 11H22.0096V9H24.0096V11ZM22.0096 9H20.0096V7H22.0096V9ZM26.0096 9H24.0096V7H26.0096V9ZM24.0096 7H22.0096V5H24.0096V7Z" fill="#ffffff"/>
+                                        </svg>
+                                        驾驶指南
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Whispers -->
+                        <div class="js-content content whispers-content">
+                            <div class="content-inner">
+                                <div class="title">发送 D-Mail 留言</div>
+                                <p class="text">将这条 D-Mail 留在停车的位置，下一位经过的驾驶员就能读到。</p>
+                                <p class="text text-small text-faded">
+                                    公开留言最多 30 个字符。可以附上一面旗帜。每位驾驶员保留一条，世界最多保留最近 30 条。
+                                </p>
+                                <p class="offline-element text text-danger">
+                                    <img src="ui/warning.svg" loading="lazy" alt="" class="icon"> 留言服务当前未连接。
+                                </p>
+                                <form class="js-input-group input-group is-message" action="#">
+                                    <div class="js-input-flag input-flag">
+                                        <div class="js-flag-button flag-button">
+                                            <img class="js-flag flag" alt="" src="ui/flags/fr.webp" loading="lazy">
+                                            <svg class="none" width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0.551758 1.7258C6.55166 -2.27398 11.0001 3.40978 19 1.40953L23 13.4096C15.5952 15.2611 11.6175 10.2589 6.30859 12.6762L8.44824 19.0941L6.55176 19.7269L0.551758 1.7258ZM5.26562 2.00328C4.68209 2.01685 4.07959 2.11674 3.42871 2.37242L6.16309 10.5746C7.17704 10.2014 8.1765 10.0274 9.17188 10.0043C10.8337 9.96566 12.395 10.3531 13.7764 10.7299C15.9783 11.3304 17.9741 11.9562 20.3564 11.806L17.6533 3.69664C13.9491 4.17921 11.0237 3.21654 8.72363 2.58922C7.3553 2.21603 6.29108 1.97952 5.26562 2.00328Z" fill="white"/>
+                                            </svg>
+                                        </div>
+
+                                        <div class="js-flag-select flag-select">
+                                            <div class="js-flag-close close-mini">
+                                                <img src="ui/close-mini.svg" loading="lazy">
+                                            </div>
+                                            <div class="js-flag-remove remove">
+                                                <img src="ui/remove.svg" loading="lazy">
+                                            </div>
+                                            <input type="text" class="js-flag-search search" placeholder="查找旗帜…">
+                                            <div class="js-no-result no-result">
+                                                没有找到
+                                            </div>
+                                            <div class="choices">
+                                                <div class="js-scroller scroller">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input class="js-input js-main-focus input-text" type="text" placeholder="写下你的留言" maxlength="30" name="message"/>
+                                    <button aria-label="发布留言" class="submit has-icon">
+                                        <svg width="39" height="38" viewBox="0 0 39 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.984 26.0434C11.087 26.0016 11.1916 25.9584 11.2975 25.914C12.9298 25.2289 14.998 24.1857 16.3708 22.8128C16.8477 22.3359 17.1994 21.573 17.4799 20.7863C17.7749 19.9587 18.0444 18.9447 18.2905 17.831C18.7834 15.6008 19.2022 12.8805 19.541 10.26C19.5427 10.2476 19.5443 10.2352 19.5459 10.2228C19.8659 12.7209 20.2775 15.3149 20.7957 17.4944C21.063 18.6186 21.3637 19.6547 21.7037 20.5201C22.0343 21.3616 22.4398 22.1422 22.963 22.6655C24.5715 24.2739 26.4382 25.3527 27.8827 26.0268C27.9024 26.036 27.922 26.0452 27.9416 26.0542C27.8074 26.1139 27.6701 26.1761 27.5304 26.2406C26.0017 26.9468 24.0681 27.9906 22.8116 29.2618C21.4879 30.6008 20.4455 32.6674 19.7513 34.3012C19.698 34.4266 19.6465 34.5502 19.5967 34.6716C19.5466 34.5489 19.4948 34.424 19.4411 34.2972C18.7484 32.6615 17.7049 30.5918 16.3708 29.2577C15.0363 27.9233 12.966 26.8799 11.3298 26.1873C11.2129 26.1378 11.0975 26.0899 10.984 26.0434Z" stroke="#FFCECA" stroke-width="2"/>
+                                            <path d="M30 17L30 9M26 13L34 13" stroke="#FFCECA" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Behind the scene -->
+                        <div class="js-content content behindTheScene-content">
+                            <div class="content-inner">
+                                <div class="title">阅读室</div>
+    <p class="text">在这里翻阅博客最新收录的文章。</p>
+    <div data-sf-articles></div>
+    <h2 class="title">馆藏图片</h2>
+    <div data-sf-gallery></div>
+    <p class="text"><a href="../../media/image">浏览图库</a> · <a href="../../posts">全部文章</a> · <a href="../../categories">按分类查阅</a></p>
+    <h2 class="title">关于这个世界</h2>
+    <p class="text">本站用 Rust、Axum、Yew 和 LanceDB 管理文章、音乐与图片。漫游世界通过同源接口读取这些馆藏。</p>
+    <p class="text">驾驶、碰撞和场景基于 Bruno Simon 以 MIT 许可开放的 <a href="https://github.com/brunosimon/folio-2025" target="_blank" rel="noopener noreferrer">Folio 2025</a>。Three.js 绘制世界，Rapier 负责物理模拟，Howler.js 播放声音。原场景配乐来自 Kounine。</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Modals -->
+        <div class="js-modals modals">
+
+            <!-- Circuit end -->
+            <div class="js-modal modal circuit-end" data-name="circuit-end">
+                <div class="container">
+                    <div class="content">
+                        <button aria-label="关闭" class="js-close close">
+                            <img class="icon is-default" src="ui/close.svg" loading="lazy">
+                            <span class="icon is-xbox">A</span>
+                        </button>
+
+                        <div class="your-time">
+                            本圈用时
+                            <br /><span class="js-time value">00:00:000</span>
+                        </div>
+
+                        <p class="offline-element text text-danger">
+                            <img src="ui/warning.svg" loading="lazy" alt="" class="icon"> 当前为单人模式。圈速仅在本次驾驶中显示。
+                        </p>
+
+                        <p class="not-top-10 text">
+                            这次未进前十，再跑一圈试试？
+                        </p>
+
+                        <div class="horizontal-group">
+                        
+                            <form class="js-input-group input-group is-name-tag online-element" action="#">
+                                <div class="js-input-flag input-flag">
+                                    <div class="js-flag-button flag-button">
+                                        <img class="js-flag flag" alt="" src="ui/flags/fr.webp" loading="lazy">
+                                        <svg class="none" width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.551758 1.7258C6.55166 -2.27398 11.0001 3.40978 19 1.40953L23 13.4096C15.5952 15.2611 11.6175 10.2589 6.30859 12.6762L8.44824 19.0941L6.55176 19.7269L0.551758 1.7258ZM5.26562 2.00328C4.68209 2.01685 4.07959 2.11674 3.42871 2.37242L6.16309 10.5746C7.17704 10.2014 8.1765 10.0274 9.17188 10.0043C10.8337 9.96566 12.395 10.3531 13.7764 10.7299C15.9783 11.3304 17.9741 11.9562 20.3564 11.806L17.6533 3.69664C13.9491 4.17921 11.0237 3.21654 8.72363 2.58922C7.3553 2.21603 6.29108 1.97952 5.26562 2.00328Z" fill="white"/>
+                                        </svg>
+                                    </div>
+
+                                    <div class="js-flag-select flag-select">
+                                        <div class="js-flag-close close-mini">
+                                            <img src="ui/close-mini.svg" loading="lazy">
+                                        </div>
+                                        <div class="js-flag-remove remove">
+                                            <img src="ui/remove.svg" loading="lazy">
+                                        </div>
+                                        <input type="text" class="js-flag-search search" placeholder="查找旗帜…">
+                                        <div class="js-no-result no-result">
+                                            没有找到
+                                        </div>
+                                        <div class="choices">
+                                            <div class="js-scroller scroller">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input class="js-input js-main-focus input-text" type="text" placeholder="---" maxlength="3" />
+                                <button class="submit has-text">
+                                    提交
+                                </button>
+                            </form>
+
+                            <div class="or">
+                                或
+                            </div>
+
+                            <button class="js-button-restart button">
+                                <svg class="icon icon-restart" width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 5L10 10V6C5.58172 6 2 9.58172 2 14C2 18.4183 5.58172 22 10 22C14.4183 22 18 18.4183 18 14H20C20 19.5228 15.5228 24 10 24C4.47715 24 0 19.5228 0 14C0 8.47715 4.47715 4 10 4V0L17 5Z" fill="#ffffff"/>
+                                </svg>
+                                重新起跑
+                            </button>
+
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discord -->
+            <div class="js-modal modal discord" data-name="discord">
+                <div class="container">
+                    <div class="content">
+                        <button aria-label="关闭" class="js-close close">
+                            <img class="icon is-default" src="ui/close.svg" loading="lazy">
+                            <span class="icon is-xbox">A</span>
+                        </button>
+
+                        <div class="title">站内导航</div>
+
+                        <div class="items">
+                            <div class="item">
+                                <div class="title-container">
+                                    <div class="line left"></div>
+                                    <div class="title">文章与图片</div>
+                                    <div class="line right"></div>
+                                </div>
+                                <p>漫游之外，看看博客收录的图片与插画。</p>
+                                <div class="button-container">
+                                    <a href="../../media/image" target="_blank" rel="noreferrer" class="button">
+                                        打开图库
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="title-container">
+                                    <div class="line left"></div>
+                                    <div class="title">读者共建台</div>
+                                    <div class="line right"></div>
+                                </div>
+                                <p>把想读的文章或想听的歌放进读者共建台。</p>
+                                <div class="button-container">
+                                    <a href="../../studio" target="_blank" rel="noreferrer" class="button">
+                                        前往共建台
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="js-modal modal map" data-name="map">
+
+                <button aria-label="关闭" class="js-close close">
+                    <div class="button-inner">
+                        <div class="icon-container">
+                            <img class="icon is-default" src="ui/close.svg" loading="lazy">
+                            <span class="icon is-xbox">A</span>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="js-map-container map-container">
+                    <img class="js-texture texture" loading="lazy">
+                    <div class="js-player player"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Notifications -->
+        <div class="js-notifications notifications">
+            <div class="js-items items"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,3170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StaticFlow · AI + Skill 驱动的本地优先技术博客</title>
+  <meta name="description"
+    content="可视化博客 + Skill 工作流：一键完成创作、分类、标签化、发布与部署；基于 LanceDB 统一存储文章与图片，支持全文语义、混合检索与 AI 评论自动回复。" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="googlebot" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="ackingliu" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)" />
+  <link rel="canonical" href="https://acking-you.github.io/" data-sf-seo="canonical" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="StaticFlow" />
+  <meta property="og:title" content="StaticFlow · AI + Skill 驱动的本地优先技术博客" />
+  <meta property="og:description"
+    content="可视化博客 + Skill 工作流：一键完成创作、分类、标签化、发布与部署；基于 LanceDB 统一存储文章与图片，支持全文语义、混合检索与 AI 评论自动回复。" />
+  <meta property="og:url" content="https://acking-you.github.io/" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:image" content="https://acking-you.github.io/static/android-chrome-512x512.png" />
+  <meta property="og:image:alt" content="StaticFlow" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="StaticFlow · AI + Skill 驱动的本地优先技术博客" />
+  <meta name="twitter:description"
+    content="可视化博客 + Skill 工作流：一键完成创作、分类、标签化、发布与部署；基于 LanceDB 统一存储文章与图片，支持全文语义、混合检索与 AI 评论自动回复。" />
+  <meta name="twitter:image" content="https://acking-you.github.io/static/android-chrome-512x512.png" />
+
+  <!-- GitHub Pages SPA Router: Restore original URL after 404 redirect -->
+  <script>
+    (function () {
+      var redirectPath = sessionStorage.getItem('redirectPath');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectPath');
+        history.replaceState(null, '', redirectPath);
+      }
+    })();
+  </script>
+
+  <!-- Compiled by the Trunk pre_build tailwind hook; rel="css" + filehash gives
+       a content-hashed filename so browsers/Cloudflare never serve stale CSS -->
+  <link rel="stylesheet" href="/styles-97c1d371f1c7f646.css" integrity="sha384-gmO59iBo/1BnJnn9nDhyzoPQ07bjgTf4jKDTb+wSodMxzWcY0/7DCMftjveFRV7K"/>
+  <link rel="preload" as="style" href="/static/vendor/fontawesome/css/all.min.css"
+    onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
+  </noscript>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
+  <link rel="icon" href="/static/favicon.ico" />
+  <link rel="manifest" href="/static/site.webmanifest" />
+  <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#C96442" />
+  <meta name="msapplication-TileColor" content="#141413" />
+  <meta name="msapplication-TileImage" content="/static/mstile-150x150.png" />
+
+  <!-- Trunk will compile Rust to WASM; scripts/build_frontend_selfhosted.sh runs wasm-opt -Oz -->
+  
+<script type="module">
+import init, * as bindings from '/static-flow-frontend-c7740856014422f5.js';
+const wasm = await init({ module_or_path: '/static-flow-frontend-c7740856014422f5_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+
+  <!-- Copy entire static directory -->
+  
+
+  <!-- Corner reveal theme transition (driven by window.__toggleTheme below).
+       expand: the new (dark) snapshot grows out of the toggle on top;
+       retract: the old (dark) snapshot shrinks back into the toggle on top. -->
+  <style>
+    html[data-theme-transition]::view-transition-group(root),
+    html[data-theme-transition]::view-transition-old(root),
+    html[data-theme-transition]::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+
+    html[data-theme-transition="expand"]::view-transition-old(root),
+    html[data-theme-transition="retract"]::view-transition-new(root) {
+      z-index: 1;
+    }
+
+    html[data-theme-transition="expand"]::view-transition-new(root),
+    html[data-theme-transition="retract"]::view-transition-old(root) {
+      z-index: 9999;
+    }
+
+    html[data-theme-switching] *,
+    html[data-theme-switching] *::before,
+    html[data-theme-switching] *::after {
+      transition: none !important;
+    }
+
+    .sf-theme-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483646;
+      pointer-events: none;
+      background: #141413;
+      will-change: clip-path;
+    }
+  </style>
+
+  <script>
+    // Theme bootstrap + lazy vendor asset loader (Highlight.js, KaTeX, Mermaid, xgplayer)
+    (function () {
+      var scriptPromises = Object.create(null);
+      var stylePromises = Object.create(null);
+
+      window.__sfLoadStyle = function (id, href, disabled) {
+        var existing = id ? document.getElementById(id) : null;
+        if (existing) {
+          if (typeof disabled === 'boolean') existing.disabled = disabled;
+          return Promise.resolve(existing);
+        }
+        if (stylePromises[href]) return stylePromises[href];
+        stylePromises[href] = new Promise(function (resolve, reject) {
+          var link = document.createElement('link');
+          if (id) link.id = id;
+          link.rel = 'stylesheet';
+          link.href = href;
+          link.crossOrigin = 'anonymous';
+          if (typeof disabled === 'boolean') link.disabled = disabled;
+          link.onload = function () { resolve(link); };
+          link.onerror = function (err) {
+            delete stylePromises[href];
+            reject(err);
+          };
+          document.head.appendChild(link);
+        });
+        return stylePromises[href];
+      };
+
+      window.__sfLoadScript = function (src) {
+        if (scriptPromises[src]) return scriptPromises[src];
+        scriptPromises[src] = new Promise(function (resolve, reject) {
+          var script = document.createElement('script');
+          script.src = src;
+          script.async = false;
+          script.crossOrigin = 'anonymous';
+          script.onload = function () { resolve(); };
+          script.onerror = function (err) {
+            delete scriptPromises[src];
+            reject(err);
+          };
+          document.head.appendChild(script);
+        });
+        return scriptPromises[src];
+      };
+
+      var setHighlightTheme = function (theme) {
+        var lightTheme = document.getElementById('hljs-light');
+        var darkTheme = document.getElementById('hljs-dark');
+        var useDark = theme === 'dark';
+        if (lightTheme) lightTheme.disabled = useDark;
+        if (darkTheme) darkTheme.disabled = !useDark;
+      };
+      window.__sfSyncHighlightTheme = setHighlightTheme;
+
+      try {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (_) { }
+        if (stored !== 'dark' && stored !== 'light') stored = null;
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        var root = document.documentElement;
+        root.setAttribute('data-theme', theme);
+        setHighlightTheme(theme);
+
+        // Module-level desired theme: flips synchronously on every click so
+        // rapid multi-clicks never skipTransition() or desync button icons.
+        var desiredTheme = theme;
+
+        var commitThemePreference = function (next) {
+          desiredTheme = next;
+          try { localStorage.setItem('theme', next); } catch (_) { }
+          try {
+            window.dispatchEvent(new CustomEvent('sf-theme-change', { detail: { theme: next } }));
+          } catch (_) { }
+        };
+
+        window.__sfBuildMermaidConfig = function (themeName) {
+          var isDark = themeName === 'dark';
+          var fontSans = '"Inter", "Styrene B", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", system-ui, sans-serif';
+          return {
+            startOnLoad: false,
+            theme: 'base',
+            fontFamily: fontSans,
+            themeVariables: isDark ? {
+              darkMode: true,
+              background: '#191816',
+              fontFamily: fontSans,
+              fontSize: '13.5px',
+              primaryColor: '#22211E',
+              primaryTextColor: '#FAF9F5',
+              primaryBorderColor: '#3E3B35',
+              secondaryColor: '#2D201B',
+              secondaryTextColor: '#F9EBE5',
+              secondaryBorderColor: '#D97757',
+              tertiaryColor: '#262420',
+              tertiaryTextColor: '#D8D5CB',
+              tertiaryBorderColor: '#45423A',
+              lineColor: '#949186',
+              textColor: '#FAF9F5',
+              mainBkg: '#22211E',
+              nodeBorder: '#3E3B35',
+              clusterBkg: '#21201C',
+              clusterBorder: '#45423A',
+              defaultLinkColor: '#949186',
+              titleColor: '#FAF9F5',
+              edgeLabelBackground: '#181715',
+              actorBkg: '#24231F',
+              actorBorder: '#48453D',
+              actorTextColor: '#FAF9F5',
+              actorLineColor: '#55524A',
+              signalColor: '#949186',
+              signalTextColor: '#FAF9F5',
+              labelBoxBkgColor: '#2B2924',
+              labelBoxBorderColor: '#45423A',
+              labelTextColor: '#B8B5AB',
+              loopTextColor: '#B8B5AB',
+              noteBkgColor: '#2A211C',
+              noteBorderColor: '#754E3E',
+              noteTextColor: '#F4E1D9',
+              activationBkgColor: '#36241E',
+              activationBorderColor: '#D97757',
+              sequenceNumberColor: '#141413',
+              git0: '#D97757',
+              git1: '#8FAF7F',
+              git2: '#7BA3BA',
+              git3: '#D4A853',
+              git4: '#AE8FB9',
+              git5: '#E07A6E',
+              git6: '#A5A58D',
+              git7: '#C29B78',
+              commitLabelColor: '#B8B5AB',
+              commitLabelBackground: '#181715'
+            } : {
+              darkMode: false,
+              background: '#F3F0E8',
+              fontFamily: fontSans,
+              fontSize: '13.5px',
+              primaryColor: '#FFFFFF',
+              primaryTextColor: '#141413',
+              primaryBorderColor: '#CFC8B9',
+              secondaryColor: '#F7EAE3',
+              secondaryTextColor: '#2C160E',
+              secondaryBorderColor: '#C96442',
+              tertiaryColor: '#EAE4D8',
+              tertiaryTextColor: '#3D3D3A',
+              tertiaryBorderColor: '#C2BAAA',
+              lineColor: '#6C6960',
+              textColor: '#141413',
+              mainBkg: '#FFFFFF',
+              nodeBorder: '#CFC8B9',
+              clusterBkg: '#ECE7DB',
+              clusterBorder: '#C2BAAA',
+              defaultLinkColor: '#6C6960',
+              titleColor: '#141413',
+              edgeLabelBackground: '#FAF9F5',
+              actorBkg: '#FFFFFF',
+              actorBorder: '#C2BAAA',
+              actorTextColor: '#141413',
+              actorLineColor: '#ABA598',
+              signalColor: '#6C6960',
+              signalTextColor: '#141413',
+              labelBoxBkgColor: '#EAE4D7',
+              labelBoxBorderColor: '#C2BAAA',
+              labelTextColor: '#4F4E49',
+              loopTextColor: '#4F4E49',
+              noteBkgColor: '#F6ECE4',
+              noteBorderColor: '#D8A792',
+              noteTextColor: '#38231B',
+              activationBkgColor: '#F3DFD6',
+              activationBorderColor: '#C96442',
+              sequenceNumberColor: '#FFFFFF',
+              git0: '#C96442',
+              git1: '#5A7A4F',
+              git2: '#4A7288',
+              git3: '#B7862F',
+              git4: '#7A5C85',
+              git5: '#B5443A',
+              git6: '#6B705C',
+              git7: '#7F5539',
+              commitLabelColor: '#4F4E49',
+              commitLabelBackground: '#FAF9F5'
+            },
+            flowchart: {
+              htmlLabels: true,
+              curve: 'basis',
+              nodeSpacing: 36,
+              rankSpacing: 44,
+              diagramPadding: 12,
+              padding: 12,
+              wrappingWidth: 210
+            },
+            sequence: {
+              diagramMarginX: 16,
+              diagramMarginY: 12,
+              actorMargin: 42,
+              width: 146,
+              height: 44,
+              boxMargin: 10,
+              boxTextMargin: 6,
+              noteMargin: 10,
+              messageMargin: 32,
+              mirrorActors: false,
+              bottomMarginAdj: 4,
+              useMaxWidth: true,
+              actorFontFamily: fontSans,
+              actorFontSize: 13,
+              actorFontWeight: 600,
+              noteFontFamily: fontSans,
+              noteFontSize: 12.5,
+              noteFontWeight: 400,
+              messageFontFamily: fontSans,
+              messageFontSize: 12.5,
+              messageFontWeight: 400
+            },
+            state: {
+              dividerMargin: 8,
+              sizeUnit: 5,
+              padding: 10,
+              textHeight: 11,
+              titleShift: -12,
+              noteMargin: 10
+            },
+            gantt: {
+              titleTopMargin: 16,
+              barHeight: 22,
+              barGap: 6,
+              topPadding: 40,
+              leftPadding: 92,
+              gridLineStartPadding: 24,
+              fontSize: 12,
+              sectionFontSize: 12.5
+            },
+            gitGraph: {
+              showBranches: true,
+              showCommitLabel: true,
+              mainBranchName: 'main',
+              rotateCommitLabel: true
+            }
+          };
+        };
+
+        var applyDomThemeSilent = function (next) {
+          root.setAttribute('data-theme', next);
+          setHighlightTheme(next);
+          if (window.mermaid && typeof window.mermaid.initialize === 'function') {
+            try {
+              window.mermaid.initialize(window.__sfBuildMermaidConfig(next));
+            } catch (_) { }
+          }
+        };
+
+        // Mutate DOM theme with every CSS transition suspended, then force a
+        // style flush, so snapshots / reveal layers carry final colors instead
+        // of half-interpolated ones.
+        var applyThemeInstantly = function (next) {
+          root.setAttribute('data-theme-switching', '');
+          applyDomThemeSilent(next);
+          void root.offsetHeight;
+        };
+        var releaseSwitching = function () {
+          root.removeAttribute('data-theme-switching');
+        };
+
+        var resolveOrigin = function (evt, originEl) {
+          var w = window.innerWidth;
+          var h = window.innerHeight;
+          var target = originEl && originEl.nodeType === 1 ? originEl : null;
+          if (!target && evt && evt.currentTarget && evt.currentTarget.nodeType === 1 &&
+            evt.currentTarget !== document.body && evt.currentTarget !== root) {
+            target = evt.currentTarget;
+          }
+          if (target && target.getBoundingClientRect) {
+            var rect = target.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+              return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            }
+          }
+          if (evt && typeof evt.clientX === 'number' && (evt.clientX > 0 || evt.clientY > 0)) {
+            return { x: evt.clientX, y: evt.clientY };
+          }
+          return { x: Math.max(0, w - 28), y: 28 };
+        };
+
+        var getAnimProgress = function (anim) {
+          if (!anim || !anim.effect || typeof anim.effect.getComputedTiming !== 'function') {
+            return 0;
+          }
+          var timing = anim.effect.getComputedTiming();
+          if (timing && typeof timing.progress === 'number' && isFinite(timing.progress)) {
+            return Math.max(0, Math.min(1, timing.progress));
+          }
+          return anim.playState === 'finished' ? 1 : 0;
+        };
+
+        // Sub-pixel continuous radius state machine for View Transitions
+        var activeTransition = null;
+        var activeAnim = null;
+        var activePseudo = null;
+        var activeStartTheme = theme;
+        var activeInitialTarget = theme;
+        var animFromR = 0;
+        var animToR = 0;
+        var activeCx = 0;
+        var activeCy = 0;
+        var activeEndRadius = 1;
+        var rafWatcherId = 0;
+
+        var stopRafWatcher = function () {
+          if (rafWatcherId) {
+            cancelAnimationFrame(rafWatcherId);
+            rafWatcherId = 0;
+          }
+        };
+
+        var startRafWatcher = function () {
+          if (rafWatcherId) return;
+          var step = function () {
+            rafWatcherId = 0;
+            if (!activeTransition || !activeAnim) return;
+            var p = getAnimProgress(activeAnim);
+            var curR = animFromR + (animToR - animFromR) * p;
+            var goalR = desiredTheme === 'dark' ? activeEndRadius : 0;
+            var domNow = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+            if (desiredTheme === activeStartTheme && domNow !== desiredTheme && Math.abs(curR - goalR) <= 4) {
+              // Even-click return approaching endpoint (<4px inside button in expand,
+              // or 99.9%+ covered by dark old snapshot in retract): pre-sync live DOM
+              // silently so transition teardown never flashes a single frame.
+              applyThemeInstantly(desiredTheme);
+              releaseSwitching();
+            } else if (desiredTheme === activeInitialTarget && domNow !== activeInitialTarget) {
+              applyThemeInstantly(activeInitialTarget);
+              releaseSwitching();
+            }
+
+            if (activeTransition && activeAnim && activeAnim.playState !== 'finished') {
+              rafWatcherId = requestAnimationFrame(step);
+            }
+          };
+          rafWatcherId = requestAnimationFrame(step);
+        };
+
+        // Fallback radial clip overlay for browsers without View Transitions,
+        // also supporting smooth continuous radius reversal on rapid clicks.
+        var fallbackOverlay = null;
+        var fbAnim = null;
+        var fbFromR = 0;
+        var fbToR = 0;
+        var fbCx = 0;
+        var fbCy = 0;
+        var fbEndRadius = 1;
+
+        var runOverlayReveal = function (cx, cy, endRadius) {
+          if (fallbackOverlay && fbAnim) {
+            var fp = getAnimProgress(fbAnim);
+            var fCurR = fbFromR + (fbToR - fbFromR) * fp;
+            var fGoalR = desiredTheme === 'dark' ? fbEndRadius : 0;
+            var fDur = Math.max(
+              190,
+              Math.round(480 * Math.pow(Math.abs(fGoalR - fCurR) / Math.max(1, fbEndRadius), 0.75))
+            );
+            var prevFbAnim = fbAnim;
+            var overlayRef = fallbackOverlay;
+            var nextFbAnim = overlayRef.animate(
+              {
+                clipPath: [
+                  'circle(' + fCurR.toFixed(1) + 'px at ' + fbCx + 'px ' + fbCy + 'px)',
+                  'circle(' + fGoalR + 'px at ' + fbCx + 'px ' + fbCy + 'px)'
+                ]
+              },
+              {
+                duration: fDur,
+                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                fill: 'both'
+              }
+            );
+            prevFbAnim.cancel();
+            fbAnim = nextFbAnim;
+            fbFromR = fCurR;
+            fbToR = fGoalR;
+            nextFbAnim.onfinish = function () {
+              if (fbAnim !== nextFbAnim) return;
+              applyThemeInstantly(desiredTheme);
+              releaseSwitching();
+              fbAnim = null;
+              if (fallbackOverlay === overlayRef) fallbackOverlay = null;
+              overlayRef.remove();
+            };
+            return;
+          }
+
+          var expand = desiredTheme === 'dark';
+          var overlay = document.createElement('div');
+          overlay.setAttribute('aria-hidden', 'true');
+          overlay.className = 'sf-theme-reveal';
+          fbCx = cx;
+          fbCy = cy;
+          fbEndRadius = endRadius;
+          fbFromR = expand ? 0 : endRadius;
+          fbToR = expand ? endRadius : 0;
+          var small = 'circle(0px at ' + cx + 'px ' + cy + 'px)';
+          var large = 'circle(' + endRadius + 'px at ' + cx + 'px ' + cy + 'px)';
+          overlay.style.clipPath = expand ? small : large;
+          overlay.style.webkitClipPath = overlay.style.clipPath;
+          document.body.appendChild(overlay);
+          fallbackOverlay = overlay;
+
+          // Keep underlying DOM in light while the #141413 dark reveal circle animates.
+          if ((root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light') !== 'light') {
+            applyThemeInstantly('light');
+            releaseSwitching();
+          }
+
+          var done = function () {
+            applyThemeInstantly(desiredTheme);
+            releaseSwitching();
+            fbAnim = null;
+            if (fallbackOverlay === overlay) fallbackOverlay = null;
+            overlay.remove();
+          };
+
+          if (typeof overlay.animate !== 'function') {
+            done();
+            return;
+          }
+
+          var anim = overlay.animate(
+            { clipPath: expand ? [small, large] : [large, small] },
+            {
+              duration: expand ? 520 : 460,
+              easing: expand ? 'cubic-bezier(0.22, 1, 0.36, 1)' : 'cubic-bezier(0.16, 1, 0.3, 1)',
+              fill: 'both'
+            }
+          );
+          fbAnim = anim;
+          anim.onfinish = function () {
+            if (fbAnim !== anim) return;
+            done();
+          };
+        };
+
+        window.__toggleTheme = function (evt, originEl) {
+          var next = desiredTheme === 'dark' ? 'light' : 'dark';
+          commitThemePreference(next);
+
+          var reduceMotion = !!(window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+          if (reduceMotion) {
+            if (!activeTransition) {
+              applyThemeInstantly(desiredTheme);
+              releaseSwitching();
+            }
+            return;
+          }
+
+          var origin = resolveOrigin(evt, originEl);
+          var cx = Math.round(origin.x);
+          var cy = Math.round(origin.y);
+          var endRadius = Math.ceil(Math.hypot(
+            Math.max(cx, window.innerWidth - cx),
+            Math.max(cy, window.innerHeight - cy)
+          ));
+
+          if (typeof document.startViewTransition !== 'function') {
+            runOverlayReveal(cx, cy, endRadius);
+            return;
+          }
+
+          // Smooth sub-pixel mid-flight reversal when a ViewTransition is active:
+          // NEVER call skipTransition() (which flashes the viewport).
+          if (activeTransition) {
+            if (activeAnim) {
+              var p = getAnimProgress(activeAnim);
+              var curR = animFromR + (animToR - animFromR) * p;
+              var goalR = desiredTheme === 'dark' ? activeEndRadius : 0;
+              var dur = Math.max(
+                190,
+                Math.round(480 * Math.pow(Math.abs(goalR - curR) / Math.max(1, activeEndRadius), 0.75))
+              );
+              try {
+                var prevAnim = activeAnim;
+                var nextAnim = root.animate(
+                  {
+                    clipPath: [
+                      'circle(' + curR.toFixed(1) + 'px at ' + activeCx + 'px ' + activeCy + 'px)',
+                      'circle(' + goalR + 'px at ' + activeCx + 'px ' + activeCy + 'px)'
+                    ]
+                  },
+                  {
+                    duration: dur,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                    fill: 'both',
+                    pseudoElement: activePseudo
+                  }
+                );
+                prevAnim.cancel();
+                activeAnim = nextAnim;
+                animFromR = curR;
+                animToR = goalR;
+                startRafWatcher();
+                return;
+              } catch (_) {
+                // Pseudo-element tree already tearing down; fall through to cleanup.
+              }
+            } else {
+              // Clicked again during the snapshot capture microtask before ready:
+              // transition.ready will read the updated desiredTheme automatically.
+              return;
+            }
+          }
+
+          var startTheme = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+          var initialTarget = desiredTheme;
+          if (startTheme === initialTarget) {
+            applyThemeInstantly(desiredTheme);
+            releaseSwitching();
+            return;
+          }
+
+          var mode = initialTarget === 'dark' ? 'expand' : 'retract';
+          activeStartTheme = startTheme;
+          activeInitialTarget = initialTarget;
+          activePseudo = mode === 'expand'
+            ? '::view-transition-new(root)'
+            : '::view-transition-old(root)';
+          activeCx = cx;
+          activeCy = cy;
+          activeEndRadius = endRadius;
+          animFromR = mode === 'expand' ? 0 : endRadius;
+          animToR = mode === 'expand' ? endRadius : 0;
+          activeAnim = null;
+
+          root.setAttribute('data-theme-transition', mode);
+
+          var transition;
+          try {
+            transition = document.startViewTransition(function () {
+              applyThemeInstantly(initialTarget);
+            });
+          } catch (_) {
+            root.removeAttribute('data-theme-transition');
+            applyThemeInstantly(desiredTheme);
+            releaseSwitching();
+            return;
+          }
+          activeTransition = transition;
+
+          var cleanup = function () {
+            if (activeTransition !== transition) return;
+            stopRafWatcher();
+            activeTransition = null;
+            activeAnim = null;
+            activePseudo = null;
+            root.removeAttribute('data-theme-transition');
+            if ((root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light') !== desiredTheme) {
+              applyThemeInstantly(desiredTheme);
+            }
+            releaseSwitching();
+          };
+
+          transition.ready.then(function () {
+            if (activeTransition !== transition) return;
+            releaseSwitching();
+            var startR = mode === 'expand' ? 0 : activeEndRadius;
+            var targetR = desiredTheme === 'dark' ? activeEndRadius : 0;
+            var unchanged = desiredTheme === initialTarget;
+            var ratio = Math.abs(targetR - startR) / Math.max(1, activeEndRadius);
+            var firstDur = unchanged
+              ? (mode === 'expand' ? 520 : 460)
+              : Math.max(190, Math.round(480 * Math.pow(ratio, 0.75)));
+            var firstEasing = (unchanged && mode === 'expand')
+              ? 'cubic-bezier(0.22, 1, 0.36, 1)'
+              : 'cubic-bezier(0.16, 1, 0.3, 1)';
+            animFromR = startR;
+            animToR = targetR;
+            activeAnim = root.animate(
+              {
+                clipPath: [
+                  'circle(' + startR.toFixed(1) + 'px at ' + activeCx + 'px ' + activeCy + 'px)',
+                  'circle(' + targetR + 'px at ' + activeCx + 'px ' + activeCy + 'px)'
+                ]
+              },
+              {
+                duration: firstDur,
+                easing: firstEasing,
+                fill: 'both',
+                pseudoElement: activePseudo
+              }
+            );
+            startRafWatcher();
+          }).catch(function () { });
+          transition.finished.then(cleanup, cleanup);
+        };
+      } catch (_) { }
+
+      var hljsReady = null;
+      var extraLangMap = {
+        rust: 'rust',
+        toml: 'ini',
+        dockerfile: 'dockerfile',
+        protobuf: 'protobuf'
+      };
+      window.__sfEnsureHighlightJs = function (codeBlocks) {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        window.__sfLoadStyle(
+          'hljs-light',
+          'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css',
+          isDark
+        ).catch(function () { });
+        window.__sfLoadStyle(
+          'hljs-dark',
+          'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css',
+          !isDark
+        ).catch(function () { });
+
+        if (!hljsReady) {
+          hljsReady = window.__sfLoadScript(
+            'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'
+          ).catch(function (err) {
+            hljsReady = null;
+            throw err;
+          });
+        }
+
+        return hljsReady.then(function () {
+          setHighlightTheme(document.documentElement.getAttribute('data-theme') || 'light');
+          if (!window.hljs || !Array.isArray(codeBlocks)) return;
+          var missing = [];
+          codeBlocks.forEach(function (block) {
+            var cls = Array.from(block.classList || []).find(function (c) {
+              return c.indexOf('language-') === 0;
+            });
+            if (!cls) return;
+            var rawLang = cls.slice('language-'.length).toLowerCase();
+            if (!rawLang || rawLang === 'plaintext' || rawLang === 'text' || rawLang === 'mermaid') return;
+            if (!window.hljs.getLanguage(rawLang)) {
+              var mapped = extraLangMap[rawLang] || rawLang;
+              if (/^[a-z0-9_-]+$/.test(mapped) && missing.indexOf(mapped) === -1) {
+                missing.push(mapped);
+              }
+            }
+          });
+          if (missing.length === 0) return;
+          return Promise.all(missing.map(function (lang) {
+            return window.__sfLoadScript(
+              'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/' + lang + '.min.js'
+            ).catch(function () { });
+          }));
+        });
+      };
+
+      var katexReady = null;
+      window.__sfEnsureKatex = function () {
+        if (window.renderMathInElement) return Promise.resolve();
+        if (katexReady) return katexReady;
+        katexReady = Promise.all([
+          window.__sfLoadStyle(
+            'sf-katex-css',
+            'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css'
+          ),
+          window.__sfLoadScript('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js')
+        ]).then(function () {
+          return window.__sfLoadScript(
+            'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js'
+          );
+        }).catch(function (err) {
+          katexReady = null;
+          throw err;
+        });
+        return katexReady;
+      };
+
+      var mermaidReady = null;
+      window.__sfEnsureMermaid = function () {
+        if (window.mermaid) return Promise.resolve(window.mermaid);
+        if (mermaidReady) return mermaidReady;
+        mermaidReady = import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
+          .then(function (mod) {
+            var mermaid = mod.default || mod;
+            window.mermaid = mermaid;
+            var currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            mermaid.initialize(
+              typeof window.__sfBuildMermaidConfig === 'function'
+                ? window.__sfBuildMermaidConfig(currentTheme)
+                : { startOnLoad: false, theme: 'base' }
+            );
+            return mermaid;
+          })
+          .catch(function (err) {
+            mermaidReady = null;
+            throw err;
+          });
+        return mermaidReady;
+      };
+
+      var localMediaReady = null;
+      window.__sfEnsureLocalMediaPlayer = function () {
+        if (window.sfLocalMediaPlayerMount && window.Player) return Promise.resolve();
+        if (localMediaReady) return localMediaReady;
+        localMediaReady = Promise.all([
+          window.__sfLoadStyle('sf-xgplayer-css', '/static/vendor/xgplayer/index.min.css'),
+          window.__sfLoadScript('/static/vendor/xgplayer/index.min.js')
+        ]).then(function () {
+          return window.__sfLoadScript('/static/vendor/xgplayer-hls/index.min.js');
+        }).then(function () {
+          return window.__sfLoadScript('/static/local_media_player_bridge.js');
+        }).catch(function (err) {
+          localMediaReady = null;
+          throw err;
+        });
+        return localMediaReady;
+      };
+
+      window.sfLocalMediaPlayerMountLazy = function (element, url, mode, title, storageKey) {
+        if (!element) return;
+        element.__sfLazyUnmounted = false;
+        window.__sfEnsureLocalMediaPlayer().then(function () {
+          if (element.__sfLazyUnmounted || !element.isConnected) return;
+          if (typeof window.sfLocalMediaPlayerMount === 'function') {
+            window.sfLocalMediaPlayerMount(element, url, mode, title, storageKey);
+          }
+        }).catch(function (err) {
+          console.error('[LocalMediaPlayer] Failed to load assets:', err);
+        });
+      };
+
+      window.sfLocalMediaPlayerUnmountLazy = function (element) {
+        if (element) element.__sfLazyUnmounted = true;
+        if (typeof window.sfLocalMediaPlayerUnmount === 'function') {
+          window.sfLocalMediaPlayerUnmount(element);
+        }
+      };
+    })();
+  </script>
+<link rel="modulepreload" href="/static-flow-frontend-c7740856014422f5.js" crossorigin="anonymous" integrity="sha384-L99xXDAhL8FlStBXjvmhOnj1iCpSfVNb/JD91/6x5qpysKW7i1Wndsmq6DGKXmzW"><link rel="modulepreload" href="/snippets/static-flow-frontend-e9ff9cdc8cd30eb2/inline2.js" crossorigin="anonymous" integrity="sha384-PTja3nS+dMbuM2l8lPmRg2EvienwZHLbQBQIyqXr8mbM7+lVLHD1BDFr3MtiY3zv"><link rel="modulepreload" href="/snippets/static-flow-frontend-e9ff9cdc8cd30eb2/inline1.js" crossorigin="anonymous" integrity="sha384-PTja3nS+dMbuM2l8lPmRg2EvienwZHLbQBQIyqXr8mbM7+lVLHD1BDFr3MtiY3zv"><link rel="modulepreload" href="/snippets/static-flow-frontend-e9ff9cdc8cd30eb2/inline3.js" crossorigin="anonymous" integrity="sha384-PTja3nS+dMbuM2l8lPmRg2EvienwZHLbQBQIyqXr8mbM7+lVLHD1BDFr3MtiY3zv"><link rel="modulepreload" href="/snippets/static-flow-frontend-e9ff9cdc8cd30eb2/inline0.js" crossorigin="anonymous" integrity="sha384-fwefXs6E4F3S4CjXE1mIKF11mZkcP51q90E9ieS1FLbchmX16zT8ZabEqYCLP4T2"><link rel="preload" href="/static-flow-frontend-c7740856014422f5_bg.wasm" crossorigin="anonymous" integrity="sha384-dJdpJLkDz5OhI/rVzo2T/tqEUzEURhWvv5PU8lzYOe93Joi1O6GZfoGDsCKMNR5n" as="fetch" type="application/wasm"></head>
+
+<body>
+  <!-- WASM app will render here -->
+  <noscript>本应用需要启用 JavaScript。</noscript>
+
+  <!-- Editorial WASM identity boot screen: painted at TTFB from inline CSS
+       using pre-hydrated data-theme so Light (#FAF9F5) and Dark (#141413)
+       never flash before WebAssembly hydration completes. -->
+  <div id="sf-loading" role="status" aria-live="polite" aria-label="StaticFlow loading">
+    <style>
+      #sf-loading {
+        --boot-bg: #FAF9F5;
+        --boot-ink: #141413;
+        --boot-muted: #5E5D59;
+        --boot-faint: #87867F;
+        --boot-border: rgba(20, 20, 19, 0.09);
+        --boot-accent: #C96442;
+        --boot-serif: "Source Serif 4", "Newsreader", "Iowan Old Style", "Songti SC", "Noto Serif SC", Georgia, serif;
+        --boot-sans: "Inter", "Styrene B", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", system-ui, sans-serif;
+        --boot-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: var(--boot-bg);
+        color: var(--boot-ink);
+        transition: opacity 420ms cubic-bezier(.22, 1, .36, 1),
+          transform 420ms cubic-bezier(.22, 1, .36, 1);
+      }
+
+      [data-theme="dark"] #sf-loading {
+        --boot-bg: #141413;
+        --boot-ink: #FAF9F5;
+        --boot-muted: #A3A198;
+        --boot-faint: #7A786F;
+        --boot-border: rgba(250, 249, 245, 0.10);
+        --boot-accent: #D97757;
+      }
+
+      #sf-loading.is-leaving {
+        opacity: 0;
+        transform: translateY(-6px);
+        pointer-events: none;
+      }
+
+      #sf-loading .sf-boot {
+        width: min(420px, 86vw);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      #sf-loading .sf-boot__brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      #sf-loading .sf-boot__diamond {
+        flex: none;
+        width: 16px;
+        height: 16px;
+        background: var(--boot-accent);
+        transform: rotate(45deg);
+        animation: sf-boot-breathe 2.4s ease-in-out infinite;
+      }
+
+      #sf-loading .sf-boot__title {
+        font-family: var(--boot-serif);
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        color: var(--boot-ink);
+      }
+
+      #sf-loading .sf-boot__tagline {
+        margin: 12px 0 0;
+        font-family: var(--boot-serif);
+        font-style: italic;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--boot-muted);
+      }
+
+      #sf-loading .sf-boot__track {
+        width: 100%;
+        height: 1px;
+        margin: 26px 0 22px;
+        background: var(--boot-border);
+        overflow: hidden;
+        position: relative;
+      }
+
+      #sf-loading .sf-boot__bar {
+        display: block;
+        width: 30%;
+        height: 100%;
+        background: var(--boot-accent);
+        will-change: transform;
+        animation: sf-boot-slide 1.6s ease-in-out infinite alternate;
+      }
+
+      #sf-loading .sf-boot__plate-en {
+        margin: 0;
+        font-family: var(--boot-mono);
+        font-size: 0.6875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--boot-faint);
+      }
+
+      #sf-loading .sf-boot__plate-zh {
+        margin: 6px 0 0;
+        font-family: var(--boot-sans);
+        font-size: 0.75rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--boot-faint);
+      }
+
+      #sf-loading .sf-boot__stats {
+        margin: 10px 0 0;
+        min-height: 1rem;
+        font-family: var(--boot-mono);
+        font-size: 0.6875rem;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.04em;
+        color: var(--boot-faint);
+      }
+
+      @keyframes sf-boot-breathe {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 1; }
+      }
+
+      @keyframes sf-boot-slide {
+        from { transform: translateX(0); }
+        to { transform: translateX(233.34%); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #sf-loading {
+          transition: opacity 200ms linear;
+        }
+        #sf-loading.is-leaving {
+          transform: none;
+        }
+        #sf-loading .sf-boot__diamond,
+        #sf-loading .sf-boot__bar {
+          animation: none;
+        }
+        #sf-loading .sf-boot__bar {
+          width: 100%;
+          opacity: 0.45;
+        }
+      }
+    </style>
+    <div class="sf-boot">
+      <div class="sf-boot__brand">
+        <span class="sf-boot__diamond" aria-hidden="true"></span>
+        <span class="sf-boot__title">StaticFlow</span>
+      </div>
+      <p class="sf-boot__tagline">A reader-driven, local-first library.</p>
+      <div class="sf-boot__track" aria-hidden="true">
+        <span class="sf-boot__bar"></span>
+      </div>
+      <p class="sf-boot__plate-en">RUST · YEW · WEBASSEMBLY</p>
+      <p class="sf-boot__plate-zh">正在载入 StaticFlow</p>
+      <p id="sf-boot-stats" class="sf-boot__stats" aria-hidden="true"></p>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var bootAt = (window.performance && typeof performance.now === 'function')
+        ? performance.now()
+        : Date.now();
+
+      var readWasmStatsText = function (elapsedMs) {
+        try {
+          if (!window.performance || typeof performance.getEntriesByType !== 'function') return '';
+          var entries = performance.getEntriesByType('resource') || [];
+          for (var i = entries.length - 1; i >= 0; i--) {
+            var e = entries[i];
+            if (e && typeof e.name === 'string' && e.name.indexOf('.wasm') !== -1) {
+              var bytes = e.decodedBodySize || e.encodedBodySize || e.transferSize || 0;
+              var ms = Math.max(1, Math.round(e.duration || elapsedMs));
+              if (bytes > 0) {
+                var mb = (bytes / (1024 * 1024)).toFixed(2);
+                return 'wasm ' + mb + ' MB · ' + ms + ' ms';
+              }
+              return 'wasm · ' + ms + ' ms';
+            }
+          }
+        } catch (_) { }
+        return '';
+      };
+
+      addEventListener('TrunkApplicationStarted', function () {
+        var el = document.getElementById('sf-loading');
+        var now = (window.performance && typeof performance.now === 'function')
+          ? performance.now()
+          : Date.now();
+        var elapsed = Math.max(0, now - bootAt);
+        var statsEl = document.getElementById('sf-boot-stats');
+        if (statsEl) {
+          var label = readWasmStatsText(elapsed);
+          if (label) statsEl.textContent = label;
+        }
+
+        var waitMs = Math.max(0, 220 - elapsed);
+        setTimeout(function () {
+          if (!el || !el.parentNode) return;
+          var reduceMotion = !!(window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+          // Fade in the mounted app container simultaneously over 240ms
+          try {
+            var children = document.body ? document.body.children : [];
+            for (var i = 0; i < children.length; i++) {
+              var child = children[i];
+              if (child !== el && child.tagName !== 'SCRIPT' && child.tagName !== 'NOSCRIPT' && child.tagName !== 'LINK') {
+                child.style.opacity = '0';
+                child.style.transition = 'opacity 240ms cubic-bezier(.22, 1, .36, 1)';
+                void child.offsetHeight;
+                child.style.opacity = '1';
+                (function (node) {
+                  setTimeout(function () {
+                    node.style.opacity = '';
+                    node.style.transition = '';
+                  }, 260);
+                })(child);
+              }
+            }
+          } catch (_) { }
+
+          var removed = false;
+          var removeBoot = function () {
+            if (removed) return;
+            removed = true;
+            if (el.parentNode) el.parentNode.removeChild(el);
+          };
+          el.addEventListener('transitionend', function onEnd(ev) {
+            if (ev.target === el && ev.propertyName === 'opacity') {
+              el.removeEventListener('transitionend', onEnd);
+              removeBoot();
+            }
+          });
+          el.classList.add('is-leaving');
+          setTimeout(removeBoot, reduceMotion ? 240 : 480);
+        }, waitMs);
+
+        // Reclaim legacy IndexedDB WASM cache storage in idle time
+        setTimeout(function () {
+          try {
+            if (window.indexedDB && typeof indexedDB.deleteDatabase === 'function') {
+              indexedDB.deleteDatabase('sf-wasm-cache');
+            }
+          } catch (_) { }
+        }, 3000);
+      });
+    })();
+  </script>
+
+  <script>
+    function slugifyHeadingText(text) {
+      return (text || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[`~!@#$%^&*()+=[\]{}|\\:;"'<>,.?/！？。；：、“”‘’【】（）《》]/g, '')
+        .replace(/_/g, '-')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    function assignHeadingIds(articleContent) {
+      const headings = articleContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const seen = new Map();
+
+      headings.forEach((heading, index) => {
+        const existingId = (heading.getAttribute('id') || '').trim();
+        const baseId = existingId || slugifyHeadingText(heading.textContent || '') || `heading-${index + 1}`;
+        const count = (seen.get(baseId) || 0) + 1;
+        seen.set(baseId, count);
+        heading.id = count === 1 ? baseId : `${baseId}-${count}`;
+      });
+
+      return headings;
+    }
+
+    function assignArticleBlockIds(articleContent) {
+      if (!articleContent) return;
+
+      const blockSelector = [
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'p',
+        'li',
+        'blockquote',
+        'pre',
+        'table',
+        'img',
+        '.sf-math-block',
+        'hr'
+      ].join(',');
+      const seen = new Map();
+
+      articleContent.querySelectorAll(blockSelector).forEach((block, index) => {
+        const tag = (block.tagName || 'node').toLowerCase();
+        const raw =
+          (block.textContent || '').trim() ||
+          block.getAttribute('alt') ||
+          block.getAttribute('src') ||
+          `${tag}-${index + 1}`;
+        const slug = slugifyHeadingText(raw).slice(0, 42) || `${tag}-${index + 1}`;
+        const base = `blk-${tag}-${slug}`;
+        const count = (seen.get(base) || 0) + 1;
+        seen.set(base, count);
+        const blockId = count === 1 ? base : `${base}-${count}`;
+        block.setAttribute('data-sf-block-id', blockId);
+      });
+    }
+
+    function findHashTarget(rawHash) {
+      const hash = (rawHash || '').replace(/^#/, '');
+      if (!hash) return null;
+
+      let decodedHash = hash;
+      try {
+        decodedHash = decodeURIComponent(hash);
+      } catch (_) {
+        // keep original hash if decode fails
+      }
+
+      return document.getElementById(decodedHash) || document.getElementById(hash);
+    }
+
+    function getHeadingScrollOffset() {
+      const header = document.querySelector('header');
+      if (header) {
+        const rect = header.getBoundingClientRect();
+        if (rect.height > 0) {
+          return rect.height + 12;
+        }
+      }
+
+      const rootStyle = window.getComputedStyle(document.documentElement);
+      const isDesktop = window.matchMedia('(min-width: 48rem)').matches;
+      const cssValue = rootStyle
+        .getPropertyValue(isDesktop ? '--header-height-desktop' : '--header-height-mobile')
+        .trim();
+
+      const parsed = Number.parseFloat(cssValue);
+      if (!Number.isFinite(parsed)) {
+        return 80;
+      }
+
+      if (cssValue.endsWith('rem')) {
+        const fontSize = Number.parseFloat(rootStyle.fontSize || '16') || 16;
+        return parsed * fontSize + 12;
+      }
+
+      return parsed + 12;
+    }
+
+    function scrollToHeading(target, behavior) {
+      if (!target) return;
+      const offset = getHeadingScrollOffset();
+      const targetTop = window.scrollY + target.getBoundingClientRect().top - offset;
+      window.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: behavior || 'smooth'
+      });
+    }
+
+    function bindArticleAnchorLinks(articleContent) {
+      articleContent.querySelectorAll('a[href^="#"]').forEach((link) => {
+        if (link.dataset.sfAnchorBound === 'true') {
+          return;
+        }
+
+        link.dataset.sfAnchorBound = 'true';
+        link.addEventListener('click', (event) => {
+          const href = link.getAttribute('href') || '';
+          const target = findHashTarget(href);
+          if (!target) return;
+
+          event.preventDefault();
+          scrollToHeading(target, 'smooth');
+          history.replaceState(null, '', `#${encodeURIComponent(target.id)}`);
+        });
+      });
+    }
+
+    function runMarkdownRenderPipeline(articleContent) {
+      if (!articleContent) return;
+
+      function escapeMermaidLabel(label) {
+        return String(label || '')
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .trim();
+      }
+
+      function cleanRawMermaidSource(source) {
+        return String(source || '')
+          .replace(/\r\n?/g, '\n')
+          .replace(/^```mermaid\s*/i, '')
+          .replace(/```$/g, '')
+          .trim();
+      }
+
+      function shouldNormalizeFlowchartLabels(source) {
+        const stripped = String(source || '').replace(/%%\{[\s\S]*?\}%%/g, '');
+        const lines = stripped.split('\n');
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line) continue;
+          if (line.startsWith('%%')) continue;
+          return /^(graph|flowchart)\b/i.test(line);
+        }
+        return false;
+      }
+
+      // Mermaid 10.x is strict for some tokens in unquoted labels
+      // (e.g. `malloc(size)` in `A[malloc(size)]`).
+      // Normalize common node labels into quoted forms:
+      //   A[text]   -> A["text"]
+      //   A{text}   -> A{"text"}
+      function normalizeMermaidDefinition(source) {
+        let text = cleanRawMermaidSource(source);
+        if (!text) return text;
+
+        // Strip legacy per-diagram theme/themeVariables directives so platform
+        // light/dark editorial tokens remain consistent and legible.
+        text = text.replace(/%%\{\s*init\s*:[\s\S]*?\}%%/gi, (directive) => {
+          return /\btheme(Variables)?\b/i.test(directive) ? '' : directive;
+        }).trim();
+
+        // Only normalize flowchart/graph diagrams.
+        // Other Mermaid dialects (e.g. stateDiagram) use different token rules.
+        if (!shouldNormalizeFlowchartLabels(text)) {
+          return text;
+        }
+
+        text = text.replace(/(\b[A-Za-z][\w-]*)\s*\[([^\]\n"]+)\]/g, (match, id, label) => {
+          const trimmed = label.trim();
+          // Preserve cylinder [(...)], stadium ([...]), subroutine [[...]], trapezoid/parallelogram [/.../]
+          if (/^[(\[/\\]/.test(trimmed)) return match;
+          const normalized = escapeMermaidLabel(label);
+          return normalized ? `${id}["${normalized}"]` : match;
+        });
+
+        text = text.replace(/(\b[A-Za-z][\w-]*)\s*\{([^}\n"]+)\}/g, (match, id, label) => {
+          const trimmed = label.trim();
+          // Preserve hexagon {{...}}
+          if (trimmed.startsWith('{')) return match;
+          const normalized = escapeMermaidLabel(label);
+          return normalized ? `${id}{"${normalized}"}` : match;
+        });
+
+        return text;
+      }
+
+      const BUILTIN_MERMAID_CLASSES = new Set([
+        'node', 'cluster', 'edgeLabel', 'edgePath', 'flowchart-link', 'label', 'labelBkg',
+        'marker', 'arrowheadPath', 'error-icon', 'error-text', 'actor', 'actor-top',
+        'actor-bottom', 'actor-line', 'note', 'noteText', 'loopLine', 'labelBox',
+        'labelText', 'loopText', 'messageLine0', 'messageLine1', 'messageText',
+        'sequenceNumber', 'statediagram-state', 'stateGroup', 'state-note', 'state-start',
+        'state-end', 'end-state-inner', 'fork-join', 'transition', 'section', 'section0',
+        'section1', 'section2', 'section3', 'grid', 'tick', 'today', 'task',
+        'mermaid-main-font', 'flowchartTitleText', 'titleText', 'default', 'basic',
+        'label-container', 'root', 'clusters', 'edgePaths', 'edgeLabels', 'nodes'
+      ]);
+
+      function parseCssColorToHsl(raw) {
+        const str = String(raw || '').replace(/!important/gi, '').trim().toLowerCase();
+        if (!str || str === 'none' || str === 'transparent' || str === 'inherit' || str.startsWith('var(') || str.startsWith('url(')) {
+          return null;
+        }
+        let r = NaN, g = NaN, b = NaN;
+        const hexMatch = str.match(/^#([0-9a-f]{3,8})$/i);
+        if (hexMatch) {
+          const hex = hexMatch[1];
+          if (hex.length === 3 || hex.length === 4) {
+            r = parseInt(hex[0] + hex[0], 16);
+            g = parseInt(hex[1] + hex[1], 16);
+            b = parseInt(hex[2] + hex[2], 16);
+          } else if (hex.length === 6 || hex.length === 8) {
+            r = parseInt(hex.slice(0, 2), 16);
+            g = parseInt(hex.slice(2, 4), 16);
+            b = parseInt(hex.slice(4, 6), 16);
+          }
+        } else {
+          const rgbMatch = str.match(/^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/);
+          if (rgbMatch) {
+            r = parseFloat(rgbMatch[1]);
+            g = parseFloat(rgbMatch[2]);
+            b = parseFloat(rgbMatch[3]);
+          } else {
+            const hslMatch = str.match(/^hsla?\(\s*(-?[\d.]+)(?:deg)?\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%/);
+            if (hslMatch) {
+              const h = ((parseFloat(hslMatch[1]) % 360) + 360) % 360;
+              const s = Math.max(0, Math.min(1, parseFloat(hslMatch[2]) / 100));
+              const l = Math.max(0, Math.min(1, parseFloat(hslMatch[3]) / 100));
+              return { h, s, l };
+            }
+          }
+        }
+        if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) return null;
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        let h = 0, s = 0;
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = ((g - b) / d + (g < b ? 6 : 0)) * 60; break;
+            case g: h = ((b - r) / d + 2) * 60; break;
+            default: h = ((r - g) / d + 4) * 60; break;
+          }
+        }
+        return { h, s, l };
+      }
+
+      function classifyEditorialMermaidTone(fillRaw, strokeRaw) {
+        const fill = parseCssColorToHsl(fillRaw);
+        const stroke = parseCssColorToHsl(strokeRaw);
+        let c = null;
+        if (fill) {
+          if (fill.l > 0.94 && fill.s < 0.12) {
+            if (stroke && stroke.s >= 0.18) {
+              c = stroke;
+            } else {
+              return null;
+            }
+          } else {
+            c = fill;
+          }
+        } else if (stroke && stroke.s >= 0.18) {
+          c = stroke;
+        }
+        if (!c) return null;
+        if (c.l < 0.28 && c.s < 0.18) return 'ink';
+        if (c.s < 0.13) return c.l < 0.92 ? 'stone' : null;
+        const h = c.h;
+        if (h >= 10 && h < 35) return 'terracotta';
+        if (h >= 35 && h < 69) return 'ochre';
+        if (h >= 69 && h < 169) return 'sage';
+        if (h >= 169 && h < 236) return 'slate';
+        if (h >= 236 && h < 331) return 'plum';
+        return 'brick';
+      }
+
+      function extractStyleProp(cssBody, propName) {
+        const re = new RegExp('(?:^|;)\\s*' + propName + '\\s*:\\s*([^;]+)', 'i');
+        const m = String(cssBody || '').match(re);
+        return m ? m[1].trim() : '';
+      }
+
+      function stripColorPropsFromCssBody(cssBody) {
+        return String(cssBody || '')
+          .split(';')
+          .map((decl) => decl.trim())
+          .filter((decl) => decl && !/^(fill|stroke|stroke-width|color)\s*:/i.test(decl))
+          .join('; ');
+      }
+
+      function polishMermaidSvg(svg) {
+        if (!svg) return;
+
+        // 0. Preserve invisible layout links (`~~~`) before CSS connector rules apply
+        svg.querySelectorAll('.edgePath .path, .flowchart-link, .transition').forEach((pathEl) => {
+          const inlineStyle = (pathEl.getAttribute('style') || '').toLowerCase();
+          if (
+            /stroke-width\s*:\s*0(?![0-9.])/.test(inlineStyle) ||
+            /stroke\s*:\s*(none|transparent)/.test(inlineStyle) ||
+            /opacity\s*:\s*0(?![0-9.])/.test(inlineStyle)
+          ) {
+            pathEl.dataset.sfInvisibleEdge = 'true';
+            pathEl.removeAttribute('marker-end');
+            pathEl.removeAttribute('marker-start');
+          }
+        });
+
+        // 1. Harmonize custom classDef rules inside Mermaid's <style> block
+        const styleEl = svg.querySelector('style');
+        if (styleEl && styleEl.textContent) {
+          const classTones = new Map();
+          styleEl.textContent = styleEl.textContent.replace(
+            /(#[A-Za-z0-9_-]+\s+\.([A-Za-z0-9_-]+)[^{]*)\{([^}]*)\}/g,
+            (full, selector, cls, body) => {
+              if (
+                BUILTIN_MERMAID_CLASSES.has(cls) ||
+                /^(commit|branch-label|label\d|arrow\d|sectionTitle|active\d|done\d|crit\d|task\d|activation\d)/.test(cls)
+              ) {
+                return full;
+              }
+              // Only intercept custom node classes if matching .node.<cls> exists
+              const matchingNodes = svg.querySelectorAll('.node.' + CSS.escape(cls));
+              if (matchingNodes.length === 0) return full;
+              const fillVal = extractStyleProp(body, 'fill');
+              const strokeVal = extractStyleProp(body, 'stroke');
+              const tone = classifyEditorialMermaidTone(fillVal, strokeVal);
+              if (tone && !classTones.has(cls)) {
+                classTones.set(cls, tone);
+              }
+              const cleaned = stripColorPropsFromCssBody(body);
+              return `${selector}{${cleaned}}`;
+            }
+          );
+          classTones.forEach((tone, cls) => {
+            svg.querySelectorAll('.node.' + CSS.escape(cls)).forEach((node) => {
+              node.dataset.sfTone = tone;
+            });
+          });
+        }
+
+        // 2. Harmonize inline `style A fill:...` declarations on nodes
+        svg.querySelectorAll('.node').forEach((node) => {
+          let detectedTone = node.dataset.sfTone || null;
+          const styledTargets = [node, ...node.querySelectorAll('rect, circle, ellipse, polygon, path, .label, span, text')];
+          styledTargets.forEach((el) => {
+            const inlineStyle = el.getAttribute('style');
+            if (!inlineStyle) return;
+            if (!detectedTone) {
+              const fillVal = extractStyleProp(inlineStyle, 'fill');
+              const strokeVal = extractStyleProp(inlineStyle, 'stroke');
+              detectedTone = classifyEditorialMermaidTone(fillVal, strokeVal);
+            }
+            const cleaned = stripColorPropsFromCssBody(inlineStyle);
+            if (cleaned) {
+              el.setAttribute('style', cleaned);
+            } else {
+              el.removeAttribute('style');
+            }
+          });
+          if (detectedTone) {
+            node.dataset.sfTone = detectedTone;
+          }
+        });
+
+        // 3. Tag unstyled decision diamonds for subtle terracotta accent
+        svg.querySelectorAll('.node:not([data-sf-tone]) > polygon').forEach((poly) => {
+          const parentNode = poly.closest('.node');
+          if (parentNode) {
+            parentNode.dataset.sfShape = 'diamond';
+          }
+        });
+
+        // 4. Tag non-empty edge labels so empty connectors never show empty pill borders
+        svg.querySelectorAll('.labelBkg').forEach((bkg) => {
+          if ((bkg.textContent || '').trim().length > 0) {
+            bkg.dataset.sfHasLabel = 'true';
+          }
+        });
+        svg.querySelectorAll('g.edgeLabel').forEach((edgeLabelG) => {
+          const labelText = (edgeLabelG.textContent || '').trim();
+          if (!labelText) return;
+          edgeLabelG.dataset.sfHasLabel = 'true';
+          const fo = edgeLabelG.querySelector('foreignObject');
+          const labelG = edgeLabelG.querySelector('g.label');
+          if (fo) {
+            const w = parseFloat(fo.getAttribute('width') || '0');
+            const h = parseFloat(fo.getAttribute('height') || '0');
+            if (w > 0 && h > 0) {
+              const nextW = Math.ceil(w + 18);
+              const nextH = Math.ceil(h + 8);
+              fo.setAttribute('width', String(nextW));
+              fo.setAttribute('height', String(nextH));
+              fo.style.overflow = 'visible';
+              if (labelG) {
+                labelG.setAttribute('transform', `translate(${-nextW / 2}, ${-nextH / 2})`);
+              }
+              const innerDiv = fo.firstElementChild;
+              if (innerDiv) {
+                innerDiv.style.display = 'inline-flex';
+                innerDiv.style.alignItems = 'center';
+                innerDiv.style.justifyContent = 'center';
+                innerDiv.style.width = '100%';
+                innerDiv.style.height = '100%';
+              }
+            }
+          }
+        });
+
+        // 5. Editorial rounded geometry across diagram primitives
+        svg.querySelectorAll('.node rect, .statediagram-state rect.basic').forEach((rect) => {
+          const rx = parseFloat(rect.getAttribute('rx') || '0');
+          if (!(rx > 6)) {
+            rect.setAttribute('rx', '8');
+            rect.setAttribute('ry', '8');
+          }
+        });
+        svg.querySelectorAll('.cluster > rect, .stateGroup > rect').forEach((rect) => {
+          rect.setAttribute('rx', '12');
+          rect.setAttribute('ry', '12');
+        });
+        svg.querySelectorAll('rect.actor').forEach((rect) => {
+          rect.setAttribute('rx', '8');
+          rect.setAttribute('ry', '8');
+        });
+        svg.querySelectorAll('rect.note, rect.state-note').forEach((rect) => {
+          rect.setAttribute('rx', '6');
+          rect.setAttribute('ry', '6');
+        });
+        svg.querySelectorAll('rect[class^="activation"]').forEach((rect) => {
+          rect.setAttribute('rx', '2');
+          rect.setAttribute('ry', '2');
+        });
+        svg.querySelectorAll('rect.task').forEach((rect) => {
+          const rx = parseFloat(rect.getAttribute('rx') || '0');
+          if (!(rx > 4)) {
+            rect.setAttribute('rx', '4');
+            rect.setAttribute('ry', '4');
+          }
+        });
+        svg.querySelectorAll('.er.relationshipLabelBox').forEach((rect) => {
+          rect.setAttribute('rx', '5');
+          rect.setAttribute('ry', '5');
+        });
+
+        // 6. Responsive scale bounds: never upscale small diagrams, protect ultra-wide readability
+        const vb = svg.viewBox && svg.viewBox.baseVal;
+        if (vb && vb.width > 0 && vb.height > 0) {
+          const nw = Math.ceil(vb.width);
+          const nh = Math.ceil(vb.height);
+          svg.dataset.sfNaturalWidth = String(nw);
+          svg.dataset.sfNaturalHeight = String(nh);
+          svg.removeAttribute('height');
+          svg.style.width = '100%';
+          svg.style.height = 'auto';
+          svg.style.maxWidth = `${nw}px`;
+          if (nw > 760) {
+            svg.style.minWidth = `${Math.round(nw * 0.48)}px`;
+          } else {
+            svg.style.removeProperty('min-width');
+          }
+        }
+      }
+
+      function markMermaidPending(node) {
+        if (!node) return;
+        node.classList.add('mermaid-pending');
+        node.setAttribute('aria-busy', 'true');
+        if (node._sfMermaidPendingTimer) {
+          clearTimeout(node._sfMermaidPendingTimer);
+        }
+        // Failsafe: if Mermaid rendering is stuck, fallback to code block so users never see a permanent blank state.
+        node._sfMermaidPendingTimer = setTimeout(() => {
+          if (!node.isConnected || !node.classList.contains('mermaid-pending')) return;
+          const source = node.dataset.sfMermaidRawSource || node.dataset.sfMermaidSource || cleanRawMermaidSource(node.textContent || '');
+          node.dataset.sfMermaidRendered = 'true';
+          clearMermaidPending(node);
+          replaceMermaidWithCodeBlock(node, source);
+        }, 6000);
+      }
+
+      function clearMermaidPending(node) {
+        if (!node) return;
+        node.classList.remove('mermaid-pending');
+        node.removeAttribute('aria-busy');
+        if (node._sfMermaidPendingTimer) {
+          clearTimeout(node._sfMermaidPendingTimer);
+          node._sfMermaidPendingTimer = null;
+        }
+      }
+
+      function replaceMermaidWithCodeBlock(node, source) {
+        if (!node || !node.parentNode) return;
+        clearMermaidPending(node);
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        code.className = 'language-mermaid';
+        code.textContent = String(source || '').trim();
+        pre.appendChild(code);
+        node.parentNode.replaceChild(pre, node);
+      }
+
+      function finalizeCodeEnhancements() {
+        // Add copy buttons to code blocks
+        addCopyButtonsToCodeBlocks(articleContent);
+        // Add collapsible functionality to long code blocks
+        makeCodeBlocksCollapsible(articleContent);
+      }
+
+      // Convert mermaid code blocks to mermaid divs
+      articleContent.querySelectorAll('pre code.language-mermaid').forEach((block) => {
+        const pre = block.parentElement;
+        const mermaidDiv = document.createElement('div');
+        const rawSource = cleanRawMermaidSource(block.textContent || '');
+        const source = normalizeMermaidDefinition(rawSource);
+        mermaidDiv.className = 'mermaid mermaid-pending';
+        mermaidDiv.dataset.sfMermaidRawSource = rawSource;
+        mermaidDiv.dataset.sfMermaidSource = source;
+        mermaidDiv.dataset.sfMermaidRendered = 'false';
+        mermaidDiv.setAttribute('aria-busy', 'true');
+        mermaidDiv.textContent = source;
+        pre.replaceWith(mermaidDiv);
+      });
+
+      // Syntax highlighting for code blocks (lazy-loads Highlight.js on demand)
+      const codeBlocks = Array.from(articleContent.querySelectorAll('pre code:not(.language-mermaid)'));
+      finalizeCodeEnhancements();
+      if (codeBlocks.length > 0 && typeof window.__sfEnsureHighlightJs === 'function') {
+        window.__sfEnsureHighlightJs(codeBlocks)
+          .then(() => {
+            if (!window.hljs) return;
+            codeBlocks.forEach((block) => {
+              if (block.isConnected && !block.dataset.highlighted) {
+                window.hljs.highlightElement(block);
+              }
+            });
+          })
+          .catch(() => {});
+      }
+
+      // Render Mermaid diagrams (lazy-loads Mermaid ESM only when diagrams exist)
+      articleContent.querySelectorAll('.mermaid').forEach((node) => {
+        // Existing rendered diagrams should not be parsed again.
+        if (node.querySelector('svg')) {
+          node.dataset.sfMermaidRendered = 'true';
+          clearMermaidPending(node);
+        }
+      });
+      const mermaidNodes = Array.from(articleContent.querySelectorAll('.mermaid')).filter((node) => {
+        if (node.dataset.sfMermaidRendered === 'true') return false;
+        if (node.querySelector('svg')) {
+          node.dataset.sfMermaidRendered = 'true';
+          clearMermaidPending(node);
+          return false;
+        }
+        const rawSource = node.dataset.sfMermaidRawSource || cleanRawMermaidSource(node.textContent || '');
+        const normalized = normalizeMermaidDefinition(rawSource);
+        node.textContent = normalized;
+        node.dataset.sfMermaidRawSource = rawSource;
+        node.dataset.sfMermaidSource = normalized;
+        markMermaidPending(node);
+        return true;
+      });
+      if (mermaidNodes.length > 0 && typeof window.__sfEnsureMermaid === 'function') {
+        window.__sfEnsureMermaid()
+          .then(async (mermaid) => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            if (typeof window.__sfBuildMermaidConfig === 'function') {
+              try { mermaid.initialize(window.__sfBuildMermaidConfig(currentTheme)); } catch (_) {}
+            }
+            let seq = 0;
+            for (const node of mermaidNodes) {
+              if (!node.isConnected) continue;
+              const rawSource = node.dataset.sfMermaidRawSource || node.dataset.sfMermaidSource || cleanRawMermaidSource(node.textContent || '');
+              const source = node.dataset.sfMermaidSource || normalizeMermaidDefinition(node.textContent || '');
+              node.dataset.sfMermaidRawSource = rawSource;
+              node.dataset.sfMermaidSource = source;
+              markMermaidPending(node);
+              const renderId = `sf-mermaid-${Date.now()}-${++seq}`;
+              const measureWidth = Math.max(580, Math.round((node.clientWidth || 720) - 48));
+              const measureHost = document.createElement('div');
+              measureHost.style.cssText = `position:fixed;left:-10000px;top:0;width:${measureWidth}px;visibility:hidden;pointer-events:none;overflow:visible;`;
+              document.body.appendChild(measureHost);
+              try {
+                if (typeof mermaid.parse === 'function') {
+                  await mermaid.parse(source);
+                }
+                const rendered = await mermaid.render(renderId, source, measureHost);
+                const svgHtml = rendered && rendered.svg ? rendered.svg : '';
+                if (!svgHtml || svgHtml.toLowerCase().includes('syntax error in text')) {
+                  node.dataset.sfMermaidRendered = 'true';
+                  clearMermaidPending(node);
+                  replaceMermaidWithCodeBlock(node, rawSource);
+                  continue;
+                }
+                node.innerHTML = svgHtml;
+                const svgEl = node.querySelector('svg');
+                polishMermaidSvg(svgEl);
+                if (rendered && typeof rendered.bindFunctions === 'function') {
+                  rendered.bindFunctions(node);
+                }
+                node.dataset.sfMermaidRendered = 'true';
+                clearMermaidPending(node);
+              } catch (_) {
+                node.dataset.sfMermaidRendered = 'true';
+                clearMermaidPending(node);
+                replaceMermaidWithCodeBlock(node, rawSource);
+              } finally {
+                const tempSandbox = document.getElementById('d' + renderId);
+                if (tempSandbox && tempSandbox.parentNode) {
+                  tempSandbox.parentNode.removeChild(tempSandbox);
+                }
+                if (measureHost.parentNode) {
+                  measureHost.parentNode.removeChild(measureHost);
+                }
+              }
+            }
+          })
+          .catch(() => {
+            mermaidNodes.forEach((node) => {
+              const rawSource = node.dataset.sfMermaidRawSource || node.dataset.sfMermaidSource || cleanRawMermaidSource(node.textContent || '');
+              node.dataset.sfMermaidRendered = 'true';
+              clearMermaidPending(node);
+              replaceMermaidWithCodeBlock(node, rawSource);
+            });
+          })
+          .finally(() => {
+            addCopyButtonsToMermaid(articleContent);
+            finalizeCodeEnhancements();
+          });
+      } else {
+        addCopyButtonsToMermaid(articleContent);
+        finalizeCodeEnhancements();
+      }
+
+      // Math formula rendering with KaTeX (lazy-loads KaTeX only when math exists)
+      const hasMath =
+        Boolean(articleContent.querySelector('.sf-math-block, .math, [data-math]')) ||
+        /(\$\$|\\\[|\\\(|(^|[^\\])\$[^\s$])/.test(articleContent.textContent || '');
+      if (hasMath && typeof window.__sfEnsureKatex === 'function') {
+        window.__sfEnsureKatex()
+          .then(() => {
+            if (!articleContent.isConnected || !window.renderMathInElement) return;
+            window.renderMathInElement(articleContent, {
+              delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\[', right: '\\]', display: true },
+                { left: '\\(', right: '\\)', display: false }
+              ],
+              throwOnError: false,
+              strict: false
+            });
+          })
+          .catch(() => {});
+      }
+
+      // Improve markdown wide-content UX on small screens and dense layouts
+      enhanceMarkdownWideBlocks(articleContent);
+      applyPlainParagraphSpacing(articleContent);
+
+      // Assign stable anchor ids for paragraph-level comments and quote jumps.
+      assignArticleBlockIds(articleContent);
+
+      // Add loading animation to images
+      articleContent.querySelectorAll('img').forEach((img) => {
+        if (img.complete && img.naturalHeight !== 0) {
+          // Image already loaded
+          img.classList.add('loaded');
+        } else {
+          // Add load event listener
+          img.addEventListener('load', () => {
+            img.classList.add('loaded');
+          });
+          // Handle error case
+          img.addEventListener('error', () => {
+            img.classList.add('loaded');
+          });
+        }
+      });
+    }
+
+    // Initialize markdown rendering features for article body (includes TOC + block anchors)
+    window.initMarkdownRendering = function (root) {
+      const articleContent =
+        root && root.nodeType === Node.ELEMENT_NODE
+          ? root
+          : document.querySelector('.article-content');
+      if (!articleContent) return;
+
+      runMarkdownRenderPipeline(articleContent);
+
+      assignHeadingIds(articleContent);
+      bindArticleAnchorLinks(articleContent);
+
+      // Generate table of contents
+      generateTOC(articleContent);
+
+      if (window.location.hash) {
+        const target = findHashTarget(window.location.hash);
+        if (target) {
+          scrollToHeading(target, 'auto');
+        }
+      }
+
+      // Back to top button is now managed by Yew ScrollToTopButton component
+    };
+
+    // Initialize markdown rendering features for dynamic markdown fragments.
+    // Used by comment AI replies. This must NOT mutate TOC or article block anchors.
+    window.initMarkdownFragmentRendering = function (root) {
+      const fragmentRoot =
+        root && root.nodeType === Node.ELEMENT_NODE
+          ? root
+          : document.querySelector('.comment-ai-markdown');
+      if (!fragmentRoot) return;
+      runMarkdownRenderPipeline(fragmentRoot);
+    };
+
+    // Add copy buttons to code blocks
+    function addCopyButtonsToCodeBlocks(root) {
+      (root || document).querySelectorAll('pre:not(.code-wrapper)').forEach((pre) => {
+        // Skip if already wrapped or inside a Mermaid source toggle view
+        if (
+          !pre.parentElement ||
+          pre.parentElement.classList.contains('code-wrapper') ||
+          pre.classList.contains('mermaid-source-view') ||
+          pre.closest('.mermaid-wrapper')
+        ) {
+          return;
+        }
+
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-wrapper';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        // Language label (from highlight.js `language-xxx` class)
+        const codeEl = pre.querySelector('code');
+        const langClass = codeEl && [...codeEl.classList].find((c) => c.startsWith('language-'));
+        const lang = langClass ? langClass.slice('language-'.length) : '';
+        if (lang && lang !== 'undefined' && lang !== 'plaintext') {
+          const langLabel = document.createElement('span');
+          langLabel.className = 'code-lang-label';
+          langLabel.textContent = lang;
+          langLabel.setAttribute('aria-hidden', 'true');
+          wrapper.appendChild(langLabel);
+        }
+
+        // Create copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-button';
+        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+        copyBtn.title = '复制代码';
+        copyBtn.setAttribute('aria-label', '复制代码');
+
+        copyBtn.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          const text = code ? code.textContent : pre.textContent;
+
+          try {
+            await navigator.clipboard.writeText(text);
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+            copyBtn.innerHTML = '<i class="fas fa-times"></i>';
+            setTimeout(() => {
+              copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            }, 2000);
+          }
+        });
+
+        wrapper.appendChild(copyBtn);
+      });
+    }
+
+    function wrapMarkdownNodeOnce(target, wrapperClassName) {
+      if (!target || !target.parentNode) return null;
+      const classNames = String(wrapperClassName)
+        .split(/\s+/)
+        .map((name) => name.trim())
+        .filter(Boolean);
+
+      if (
+        target.parentElement &&
+        classNames.length > 0 &&
+        classNames.every((name) => target.parentElement.classList.contains(name))
+      ) {
+        return target.parentElement;
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = wrapperClassName;
+      target.parentNode.insertBefore(wrapper, target);
+      wrapper.appendChild(target);
+      return wrapper;
+    }
+
+    function applyPlainParagraphSpacing(articleContent) {
+      if (!articleContent) return;
+      const allowedInlineTags = new Set([
+        'A',
+        'CODE',
+        'EM',
+        'STRONG',
+        'DEL',
+        'SUP',
+        'SUB',
+        'MARK',
+        'KBD',
+        'SAMP',
+        'VAR',
+        'SPAN',
+        'SMALL',
+        'B',
+        'I',
+        'U'
+      ]);
+
+      const isPlainInlineTree = (node) => {
+        if (!node) return true;
+        if (node.nodeType === Node.TEXT_NODE) return true;
+        if (node.nodeType !== Node.ELEMENT_NODE) return false;
+
+        const tag = node.tagName;
+        if (!allowedInlineTags.has(tag)) return false;
+
+        // Math/diagram/html-heavy inline wrappers should not be treated as plain prose.
+        if (
+          node.classList &&
+          (node.classList.contains('katex')
+            || node.classList.contains('mermaid')
+            || node.classList.contains('sf-math-block'))
+        ) {
+          return false;
+        }
+
+        for (const child of node.childNodes) {
+          if (!isPlainInlineTree(child)) return false;
+        }
+        return true;
+      };
+
+      Array.from(articleContent.children).forEach((child) => {
+        if (!child || child.tagName !== 'P') return;
+        child.classList.remove('sf-plain-paragraph');
+
+        const text = (child.textContent || '').trim();
+        if (!text) return;
+
+        let plain = true;
+        for (const node of child.childNodes) {
+          if (!isPlainInlineTree(node)) {
+            plain = false;
+            break;
+          }
+        }
+
+        if (plain) {
+          child.classList.add('sf-plain-paragraph');
+        }
+      });
+    }
+
+    function enhanceMarkdownWideBlocks(articleContent) {
+      if (!articleContent) return;
+
+      // Tables: horizontal rail like code blocks
+      articleContent.querySelectorAll('table').forEach((table) => {
+        wrapMarkdownNodeOnce(table, 'md-scroll-wrap md-table-wrap');
+      });
+
+      // Math blocks: keep full formula readable with horizontal scroll
+      articleContent.querySelectorAll('.sf-math-block').forEach((mathBlock) => {
+        wrapMarkdownNodeOnce(mathBlock, 'md-scroll-wrap md-math-wrap');
+      });
+
+      // Images: wide images can pan horizontally instead of shrinking aggressively
+      articleContent.querySelectorAll('img').forEach((img) => {
+        const parent = img.parentElement;
+        const imageHost =
+          parent && parent.tagName === 'A' && parent.childElementCount === 1
+            ? parent
+            : img;
+        wrapMarkdownNodeOnce(imageHost, 'md-scroll-wrap md-media-wrap');
+      });
+
+      // Blockquotes: provide overflow protection for long unbroken content
+      articleContent.querySelectorAll('blockquote').forEach((blockquote) => {
+        wrapMarkdownNodeOnce(blockquote, 'md-scroll-wrap md-quote-wrap');
+      });
+    }
+
+    // Make long code blocks collapsible
+    function makeCodeBlocksCollapsible(root) {
+      const MIN_LINES_TO_COLLAPSE = 15; // 最少行数才启用折叠
+
+      (root || document).querySelectorAll('.code-wrapper').forEach((wrapper) => {
+        // Skip if already processed
+        if (wrapper.classList.contains('code-block-wrapper')) {
+          return;
+        }
+
+        const pre = wrapper.querySelector('pre');
+        if (!pre) return;
+
+        const code = pre.querySelector('code');
+        if (!code) return;
+
+        // Count lines in code block
+        const text = code.textContent || '';
+        const lineCount = text.split('\n').length;
+
+        // Only make collapsible if it has enough lines
+        if (lineCount < MIN_LINES_TO_COLLAPSE) {
+          return;
+        }
+
+        // Add collapsible wrapper class
+        wrapper.classList.add('code-block-wrapper', 'collapsed');
+
+        // Create toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'code-toggle-btn';
+        toggleBtn.setAttribute('type', 'button');
+        toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开代码 (' + lineCount + ' 行)';
+
+        // Toggle collapse state
+        toggleBtn.addEventListener('click', () => {
+          const isCollapsed = wrapper.classList.contains('collapsed');
+
+          if (isCollapsed) {
+            wrapper.classList.remove('collapsed');
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起代码';
+          } else {
+            wrapper.classList.add('collapsed');
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> 展开代码 (' + lineCount + ' 行)';
+          }
+        });
+
+        wrapper.appendChild(toggleBtn);
+      });
+    }
+
+    // Ensure TOC is removed when leaving article pages (for SPA navigation)
+    document.addEventListener('DOMContentLoaded', () => {
+      const removeOnNav = () => {
+        // Delay check so routing state updates first
+        setTimeout(() => {
+          const stillOnArticle = document.querySelector('.article-content');
+          if (!stillOnArticle) {
+            window.cleanupMarkdownRendering?.();
+          }
+        }, 40);
+      };
+      window.addEventListener('popstate', removeOnNav);
+      window.addEventListener('hashchange', removeOnNav);
+    });
+
+    // Add copy buttons to mermaid diagrams
+    const MERMAID_ICONS = {
+      source: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+      diagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M10 6h4a2 2 0 0 1 2 2v7"></path></svg>',
+      copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
+      expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>',
+      zoomIn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>',
+      zoomOut: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>',
+      fit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>',
+      actualSize: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M8 10v4"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10v4"></path></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+    };
+
+    function buildStandaloneStyledSvg(liveSvg) {
+      const clone = liveSvg.cloneNode(true);
+      const liveNodes = [liveSvg, ...liveSvg.querySelectorAll('*')];
+      const cloneNodes = [clone, ...clone.querySelectorAll('*')];
+      const VISUAL_PROPS = [
+        'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'opacity',
+        'color', 'background-color',
+        'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+        'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
+        'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
+        'border-radius', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+        'display', 'align-items', 'justify-content', 'line-height', 'white-space', 'box-sizing',
+        'font-family', 'font-size', 'font-weight', 'letter-spacing', 'text-align', 'overflow'
+      ];
+      for (let i = 0; i < liveNodes.length; i++) {
+        const src = liveNodes[i];
+        const dst = cloneNodes[i];
+        if (!src || !dst || src.tagName === 'STYLE' || src.tagName === 'DEFS') continue;
+        const cs = window.getComputedStyle(src);
+        let styleBuf = dst.getAttribute('style') || '';
+        if (styleBuf && !styleBuf.trim().endsWith(';')) styleBuf += ';';
+        for (const prop of VISUAL_PROPS) {
+          const val = cs.getPropertyValue(prop);
+          if (val) {
+            styleBuf += `${prop}:${val};`;
+          }
+        }
+        if (styleBuf) dst.setAttribute('style', styleBuf);
+      }
+      clone.querySelectorAll('style').forEach((s) => s.remove());
+
+      const vb = liveSvg.viewBox && liveSvg.viewBox.baseVal;
+      const vbX = vb && Number.isFinite(vb.x) ? vb.x : 0;
+      const vbY = vb && Number.isFinite(vb.y) ? vb.y : 0;
+      const vbW = (vb && vb.width > 0 ? vb.width : parseFloat(liveSvg.getAttribute('width') || '800')) || 800;
+      const vbH = (vb && vb.height > 0 ? vb.height : parseFloat(liveSvg.getAttribute('height') || '600')) || 600;
+      const pad = 28;
+      const outW = Math.ceil(vbW + pad * 2);
+      const outH = Math.ceil(vbH + pad * 2);
+
+      const rootStyles = window.getComputedStyle(document.documentElement);
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const canvasBg = (rootStyles.getPropertyValue('--sf-m-canvas-bg') || '').trim() || (isDark ? '#191816' : '#F3F0E8');
+
+      clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      clone.setAttribute('viewBox', `${vbX - pad} ${vbY - pad} ${outW} ${outH}`);
+      clone.setAttribute('width', String(outW));
+      clone.setAttribute('height', String(outH));
+      clone.setAttribute('style', `width:${outW}px;height:${outH}px;max-width:none;background:${canvasBg};`);
+
+      const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      bgRect.setAttribute('x', String(vbX - pad));
+      bgRect.setAttribute('y', String(vbY - pad));
+      bgRect.setAttribute('width', String(outW));
+      bgRect.setAttribute('height', String(outH));
+      bgRect.setAttribute('fill', canvasBg);
+      clone.insertBefore(bgRect, clone.firstChild);
+
+      const xml = new XMLSerializer().serializeToString(clone);
+      return { xml, width: outW, height: outH, canvasBg };
+    }
+
+    function exportMermaidDiagram(liveSvg, btn, defaultIconHtml) {
+      if (!liveSvg) return;
+      const downloadFallbackSvg = (xml) => {
+        const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mermaid-diagram-${Date.now()}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+
+      try {
+        const { xml, width, height, canvasBg } = buildStandaloneStyledSvg(liveSvg);
+        const scale = Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio || 2)));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+        ctx.fillStyle = canvasBg;
+        ctx.fillRect(0, 0, width, height);
+
+        const img = new Image();
+        const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+        img.onload = () => {
+          try {
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                downloadFallbackSvg(xml);
+              } else {
+                const downloadUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = `mermaid-diagram-${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+              }
+              if (btn) {
+                btn.innerHTML = MERMAID_ICONS.check;
+                btn.classList.add('copied');
+                setTimeout(() => {
+                  btn.innerHTML = defaultIconHtml;
+                  btn.classList.remove('copied');
+                }, 1800);
+              }
+            }, 'image/png');
+          } catch (_) {
+            downloadFallbackSvg(xml);
+            if (btn) {
+              btn.innerHTML = MERMAID_ICONS.check;
+              btn.classList.add('copied');
+              setTimeout(() => {
+                btn.innerHTML = defaultIconHtml;
+                btn.classList.remove('copied');
+              }, 1800);
+            }
+          }
+        };
+        img.onerror = () => {
+          downloadFallbackSvg(xml);
+        };
+        img.src = dataUrl;
+      } catch (_) {
+        if (btn) {
+          btn.innerHTML = MERMAID_ICONS.error;
+          setTimeout(() => { btn.innerHTML = defaultIconHtml; }, 1800);
+        }
+      }
+    }
+
+    function addCopyButtonsToMermaid(root) {
+      const copyTextToClipboard = async (text) => {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+
+        // Fallback for environments where Clipboard API is unavailable.
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', 'readonly');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-9999px';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!copied) {
+          throw new Error('execCommand copy failed');
+        }
+      };
+
+      const getMermaidSourceText = (mermaidDiv) => {
+        const rawSource = (mermaidDiv.dataset.sfMermaidRawSource || '').trim();
+        if (rawSource) {
+          return rawSource;
+        }
+        const datasetSource = (mermaidDiv.dataset.sfMermaidSource || '').trim();
+        if (datasetSource) {
+          return datasetSource;
+        }
+
+        if (!mermaidDiv.querySelector('svg')) {
+          return String(mermaidDiv.textContent || '').trim();
+        }
+
+        return '';
+      };
+
+      (root || document).querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        // Skip if already has a wrapper with button
+        if (mermaidDiv.parentElement && mermaidDiv.parentElement.classList.contains('mermaid-wrapper')) {
+          return;
+        }
+
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mermaid-wrapper';
+        mermaidDiv.parentNode.insertBefore(wrapper, mermaidDiv);
+        wrapper.appendChild(mermaidDiv);
+
+        const sourcePre = document.createElement('pre');
+        sourcePre.className = 'mermaid-source-view';
+        const sourceCode = document.createElement('code');
+        sourceCode.textContent = getMermaidSourceText(mermaidDiv);
+        sourcePre.appendChild(sourceCode);
+        wrapper.appendChild(sourcePre);
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'mermaid-toolbar';
+        toolbar.setAttribute('role', 'toolbar');
+        toolbar.setAttribute('aria-label', '图表操作');
+
+        // Toggle diagram / raw Mermaid source inline
+        const viewSourceBtn = document.createElement('button');
+        viewSourceBtn.className = 'mermaid-tool-btn mermaid-view-button';
+        viewSourceBtn.innerHTML = MERMAID_ICONS.source;
+        viewSourceBtn.title = '查看 Mermaid 源码';
+        viewSourceBtn.setAttribute('type', 'button');
+        viewSourceBtn.setAttribute('aria-label', '查看 Mermaid 源码');
+        viewSourceBtn.setAttribute('aria-pressed', 'false');
+        viewSourceBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sourceCode.textContent = getMermaidSourceText(mermaidDiv);
+          const nextSourceMode = !wrapper.classList.contains('is-source-mode');
+          wrapper.classList.toggle('is-source-mode', nextSourceMode);
+          viewSourceBtn.classList.toggle('is-active', nextSourceMode);
+          viewSourceBtn.setAttribute('aria-pressed', nextSourceMode ? 'true' : 'false');
+          viewSourceBtn.innerHTML = nextSourceMode ? MERMAID_ICONS.diagram : MERMAID_ICONS.source;
+          viewSourceBtn.title = nextSourceMode ? '返回图表视图' : '查看 Mermaid 源码';
+          viewSourceBtn.setAttribute('aria-label', viewSourceBtn.title);
+        });
+
+        // Create source-copy button
+        const copySourceBtn = document.createElement('button');
+        copySourceBtn.className = 'copy-button mermaid-source-button';
+        copySourceBtn.innerHTML = MERMAID_ICONS.copy;
+        copySourceBtn.title = '复制 Mermaid 原文';
+        copySourceBtn.setAttribute('type', 'button');
+        copySourceBtn.setAttribute('aria-label', '复制 Mermaid 原文');
+
+        copySourceBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const sourceText = getMermaidSourceText(mermaidDiv);
+          if (!sourceText) {
+            copySourceBtn.innerHTML = MERMAID_ICONS.error;
+            copySourceBtn.title = '未找到 Mermaid 原文';
+            setTimeout(() => {
+              copySourceBtn.innerHTML = MERMAID_ICONS.copy;
+              copySourceBtn.title = '复制 Mermaid 原文';
+            }, 2000);
+            return;
+          }
+
+          try {
+            await copyTextToClipboard(sourceText);
+            copySourceBtn.innerHTML = MERMAID_ICONS.check;
+            copySourceBtn.classList.add('copied');
+            copySourceBtn.title = '已复制 Mermaid 原文';
+            setTimeout(() => {
+              copySourceBtn.innerHTML = MERMAID_ICONS.copy;
+              copySourceBtn.classList.remove('copied');
+              copySourceBtn.title = '复制 Mermaid 原文';
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy Mermaid source:', err);
+            copySourceBtn.innerHTML = MERMAID_ICONS.error;
+            copySourceBtn.title = '复制失败';
+            setTimeout(() => {
+              copySourceBtn.innerHTML = MERMAID_ICONS.copy;
+              copySourceBtn.title = '复制 Mermaid 原文';
+            }, 2000);
+          }
+        });
+
+        // Create download button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'copy-button mermaid-download-button';
+        downloadBtn.innerHTML = MERMAID_ICONS.download;
+        downloadBtn.title = '下载高清图表 (PNG)';
+        downloadBtn.setAttribute('type', 'button');
+        downloadBtn.setAttribute('aria-label', '下载高清图表');
+
+        downloadBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const svg = mermaidDiv.querySelector('svg');
+          if (!svg) {
+            downloadBtn.innerHTML = MERMAID_ICONS.error;
+            setTimeout(() => { downloadBtn.innerHTML = MERMAID_ICONS.download; }, 1800);
+            return;
+          }
+          exportMermaidDiagram(svg, downloadBtn, MERMAID_ICONS.download);
+        });
+
+        // Create fullscreen button
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'copy-button fullscreen-button';
+        fullscreenBtn.innerHTML = MERMAID_ICONS.expand;
+        fullscreenBtn.title = '全屏查看';
+        fullscreenBtn.setAttribute('type', 'button');
+        fullscreenBtn.setAttribute('aria-label', '全屏查看');
+
+        fullscreenBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openMermaidFullscreen(mermaidDiv);
+        });
+
+        toolbar.appendChild(viewSourceBtn);
+        toolbar.appendChild(copySourceBtn);
+        toolbar.appendChild(downloadBtn);
+        toolbar.appendChild(fullscreenBtn);
+        wrapper.appendChild(toolbar);
+
+        // Click diagram stage to inspect in fullscreen pan/zoom viewer
+        mermaidDiv.addEventListener('click', (e) => {
+          if (mermaidDiv.dataset.sfMermaidRendered !== 'true') return;
+          if (e.target && e.target.closest && e.target.closest('a, button, .clickable')) return;
+          const sel = window.getSelection && window.getSelection();
+          if (sel && String(sel).trim().length > 0) return;
+          openMermaidFullscreen(mermaidDiv);
+        });
+      });
+    }
+
+    // Fullscreen view for Mermaid diagrams
+    function openMermaidFullscreen(mermaidDiv) {
+      const svg = mermaidDiv.querySelector('svg');
+      if (!svg) {
+        console.error('No SVG found in mermaid div');
+        return;
+      }
+
+      // Remove stale fullscreen instance first to avoid duplicated listeners/state
+      if (typeof window.__sfCloseMermaidFullscreen === 'function') {
+        try {
+          window.__sfCloseMermaidFullscreen(true);
+        } catch (_) { }
+      }
+
+      const overlay = document.createElement('div');
+      overlay.className = 'mermaid-fullscreen-overlay';
+
+      const content = document.createElement('div');
+      content.className = 'mermaid-fullscreen-content';
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-fullscreen-toolbar';
+
+      const hint = document.createElement('span');
+      hint.className = 'mermaid-fullscreen-toolbar-hint';
+      hint.textContent = '滚轮缩放 · 拖拽平移 · 0 适应窗口 · Esc 关闭';
+
+      const actions = document.createElement('div');
+      actions.className = 'mermaid-fullscreen-toolbar-actions';
+
+      const zoomOutBtn = document.createElement('button');
+      zoomOutBtn.className = 'mermaid-fullscreen-tool-btn';
+      zoomOutBtn.innerHTML = MERMAID_ICONS.zoomOut;
+      zoomOutBtn.title = '缩小 (-)';
+      zoomOutBtn.setAttribute('type', 'button');
+      zoomOutBtn.setAttribute('aria-label', '缩小图表');
+
+      const zoomInBtn = document.createElement('button');
+      zoomInBtn.className = 'mermaid-fullscreen-tool-btn';
+      zoomInBtn.innerHTML = MERMAID_ICONS.zoomIn;
+      zoomInBtn.title = '放大 (+)';
+      zoomInBtn.setAttribute('type', 'button');
+      zoomInBtn.setAttribute('aria-label', '放大图表');
+
+      const resetZoomBtn = document.createElement('button');
+      resetZoomBtn.className = 'mermaid-fullscreen-tool-btn';
+      resetZoomBtn.innerHTML = MERMAID_ICONS.fit;
+      resetZoomBtn.title = '适应窗口 (0)';
+      resetZoomBtn.setAttribute('type', 'button');
+      resetZoomBtn.setAttribute('aria-label', '适应窗口');
+
+      const actualSizeBtn = document.createElement('button');
+      actualSizeBtn.className = 'mermaid-fullscreen-tool-btn';
+      actualSizeBtn.innerHTML = MERMAID_ICONS.actualSize;
+      actualSizeBtn.title = '1:1 原始比例 (1)';
+      actualSizeBtn.setAttribute('type', 'button');
+      actualSizeBtn.setAttribute('aria-label', '1:1 原始比例');
+
+      const exportBtn = document.createElement('button');
+      exportBtn.className = 'mermaid-fullscreen-tool-btn';
+      exportBtn.innerHTML = MERMAID_ICONS.download;
+      exportBtn.title = '下载高清 PNG';
+      exportBtn.setAttribute('type', 'button');
+      exportBtn.setAttribute('aria-label', '下载高清 PNG');
+
+      const zoomValue = document.createElement('span');
+      zoomValue.className = 'mermaid-fullscreen-zoom-value';
+      zoomValue.textContent = '100%';
+      zoomValue.setAttribute('aria-live', 'polite');
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'mermaid-fullscreen-tool-btn close-btn';
+      closeBtn.innerHTML = MERMAID_ICONS.error;
+      closeBtn.title = '关闭 (Esc)';
+      closeBtn.setAttribute('type', 'button');
+      closeBtn.setAttribute('aria-label', '关闭全屏图表');
+
+      actions.appendChild(zoomOutBtn);
+      actions.appendChild(zoomValue);
+      actions.appendChild(zoomInBtn);
+      actions.appendChild(resetZoomBtn);
+      actions.appendChild(actualSizeBtn);
+      actions.appendChild(exportBtn);
+      actions.appendChild(closeBtn);
+      toolbar.appendChild(hint);
+      toolbar.appendChild(actions);
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-fullscreen-viewport';
+
+      const canvas = document.createElement('div');
+      canvas.className = 'mermaid-fullscreen-canvas';
+
+      const clonedMermaid = document.createElement('div');
+      clonedMermaid.className = 'mermaid mermaid-fullscreen';
+      const clonedSvg = svg.cloneNode(true);
+      clonedMermaid.appendChild(clonedSvg);
+
+      canvas.appendChild(clonedMermaid);
+      viewport.appendChild(canvas);
+
+      content.appendChild(toolbar);
+      content.appendChild(viewport);
+      overlay.appendChild(content);
+      document.body.appendChild(overlay);
+
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const parseSvgLength = (value) => {
+        const parsed = Number.parseFloat(String(value || ''));
+        return Number.isFinite(parsed) && parsed > 0 ? parsed : NaN;
+      };
+
+      const getSvgNaturalSize = (svgElement) => {
+        const viewBox = svgElement.viewBox && svgElement.viewBox.baseVal;
+        if (viewBox && viewBox.width > 0 && viewBox.height > 0) {
+          return { width: viewBox.width, height: viewBox.height };
+        }
+
+        const widthAttr = parseSvgLength(svgElement.getAttribute('width'));
+        const heightAttr = parseSvgLength(svgElement.getAttribute('height'));
+        if (!Number.isNaN(widthAttr) && !Number.isNaN(heightAttr)) {
+          return { width: widthAttr, height: heightAttr };
+        }
+
+        try {
+          const box = svgElement.getBBox();
+          if (box && box.width > 0 && box.height > 0) {
+            return { width: box.width, height: box.height };
+          }
+        } catch (_) { }
+
+        const rect = svgElement.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          return { width: rect.width, height: rect.height };
+        }
+
+        return { width: 800, height: 600 };
+      };
+
+      const ZOOM_STEP = 1.2;
+      const FIT_SCALE_EPSILON = 0.985;
+      const PAN_ENABLED_SCALE_RATIO = 1.02;
+      let fitScale = 1;
+      let currentScale = 1;
+      let minScale = 0.2;
+      let maxScale = 6;
+      let naturalSize = getSvgNaturalSize(clonedSvg);
+      clonedSvg.style.width = `${Math.ceil(naturalSize.width)}px`;
+      clonedSvg.style.height = `${Math.ceil(naturalSize.height)}px`;
+      clonedSvg.style.maxWidth = 'none';
+      clonedSvg.style.minWidth = '0';
+      let panX = 0;
+      let panY = 0;
+      let dragging = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let dragOriginX = 0;
+      let dragOriginY = 0;
+
+      const updateScaleLabel = () => {
+        const relativeScale = fitScale > 0 ? currentScale / fitScale : 1;
+        zoomValue.textContent = `${Math.round(relativeScale * 100)}%`;
+      };
+
+      const updatePanMode = () => {
+        const canPan = true;
+        viewport.classList.toggle('can-pan', canPan);
+      };
+
+      const applyTransform = () => {
+        canvas.style.transform = `translate(${panX.toFixed(2)}px, ${panY.toFixed(2)}px) scale(${currentScale.toFixed(4)})`;
+      };
+
+      const applyScale = (nextScale) => {
+        currentScale = clamp(nextScale, minScale, maxScale);
+        updatePanMode();
+        applyTransform();
+        updateScaleLabel();
+      };
+
+      const recalcScaleBounds = () => {
+        naturalSize = getSvgNaturalSize(clonedSvg);
+        // Use layout dimensions (clientWidth/clientHeight) to avoid transform animation
+        // affecting fit calculations during open/resize transitions.
+        const availableWidth = Math.max(180, viewport.clientWidth - 6);
+        const availableHeight = Math.max(160, viewport.clientHeight - 6);
+        const measuredWidth = clonedMermaid.offsetWidth;
+        const measuredHeight = clonedMermaid.offsetHeight;
+        const baseWidth = Math.max(1, Number.isFinite(measuredWidth) && measuredWidth > 0 ? measuredWidth : naturalSize.width);
+        const baseHeight = Math.max(1, Number.isFinite(measuredHeight) && measuredHeight > 0 ? measuredHeight : naturalSize.height);
+
+        fitScale = Math.min(availableWidth / baseWidth, availableHeight / baseHeight) * FIT_SCALE_EPSILON;
+        if (!Number.isFinite(fitScale) || fitScale <= 0) {
+          fitScale = 1;
+        }
+
+        minScale = Math.max(0.2, fitScale * 0.4);
+        maxScale = Math.max(6, fitScale * 8);
+      };
+
+      let closed = false;
+      const closeFullscreen = (immediate) => {
+        if (closed) return;
+        closed = true;
+        dragging = false;
+        overlay.classList.remove('open');
+        document.removeEventListener('keydown', handleKeydown);
+        viewport.removeEventListener('wheel', handleWheel);
+        viewport.removeEventListener('pointerdown', handlePointerDown);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointercancel', handlePointerUp);
+        window.removeEventListener('resize', handleResize);
+        const finalize = () => {
+          if (overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+          }
+          document.body.style.overflow = previousOverflow;
+          if (window.__sfCloseMermaidFullscreen === closeFullscreenHandle) {
+            window.__sfCloseMermaidFullscreen = null;
+          }
+        };
+        if (immediate) {
+          finalize();
+          return;
+        }
+        setTimeout(finalize, 220);
+      };
+      const closeFullscreenHandle = (immediate) => closeFullscreen(!!immediate);
+      window.__sfCloseMermaidFullscreen = closeFullscreenHandle;
+
+      const handleKeydown = (event) => {
+        if (event.key === 'Escape') {
+          closeFullscreen(false);
+          return;
+        }
+
+        if (event.key === '+' || event.key === '=' || event.key === 'Add') {
+          event.preventDefault();
+          applyScale(currentScale * ZOOM_STEP);
+          return;
+        }
+
+        if (event.key === '-' || event.key === '_' || event.key === 'Subtract') {
+          event.preventDefault();
+          applyScale(currentScale / ZOOM_STEP);
+          return;
+        }
+
+        if (event.key === '0') {
+          event.preventDefault();
+          panX = 0;
+          panY = 0;
+          applyScale(fitScale);
+          return;
+        }
+
+        if (event.key === '1') {
+          event.preventDefault();
+          panX = 0;
+          panY = 0;
+          applyScale(1);
+        }
+      };
+
+      const handleWheel = (event) => {
+        event.preventDefault();
+        const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12;
+        applyScale(currentScale * factor);
+      };
+
+      const handleResize = () => {
+        const ratioToFit = fitScale > 0 ? currentScale / fitScale : 1;
+        recalcScaleBounds();
+        applyScale(fitScale * ratioToFit);
+      };
+
+      const handlePointerDown = (event) => {
+        if (event.button !== 0) return;
+        dragging = true;
+        dragStartX = event.clientX;
+        dragStartY = event.clientY;
+        dragOriginX = panX;
+        dragOriginY = panY;
+        viewport.classList.add('is-dragging');
+        event.preventDefault();
+      };
+
+      const handlePointerMove = (event) => {
+        if (!dragging) return;
+        panX = dragOriginX + (event.clientX - dragStartX);
+        panY = dragOriginY + (event.clientY - dragStartY);
+        applyTransform();
+      };
+
+      const handlePointerUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        viewport.classList.remove('is-dragging');
+      };
+
+      zoomInBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        applyScale(currentScale * ZOOM_STEP);
+      });
+
+      zoomOutBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        applyScale(currentScale / ZOOM_STEP);
+      });
+
+      resetZoomBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        panX = 0;
+        panY = 0;
+        applyScale(fitScale);
+      });
+
+      actualSizeBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        panX = 0;
+        panY = 0;
+        applyScale(1);
+      });
+
+      exportBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        exportMermaidDiagram(svg, exportBtn, MERMAID_ICONS.download);
+      });
+
+      closeBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeFullscreen(false);
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          closeFullscreen(false);
+        }
+      });
+
+      document.addEventListener('keydown', handleKeydown);
+      viewport.addEventListener('wheel', handleWheel, { passive: false });
+      viewport.addEventListener('pointerdown', handlePointerDown);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
+      window.addEventListener('resize', handleResize);
+
+      recalcScaleBounds();
+      applyScale(fitScale);
+
+      setTimeout(() => {
+        overlay.classList.add('open');
+      }, 10);
+    }
+
+    // Generate table of contents from article headings
+    const DESKTOP_TOC_BREAKPOINT = 1280;
+    const TOC_SLIDEOUT_BREAKPOINT = 2560;
+    const TOC_LAYOUT_CLASSES = [
+      'has-desktop-toc',
+      'has-desktop-toc-collapsed',
+      'has-desktop-toc-left',
+      'has-desktop-toc-right',
+      'toc-mode-fixed-right',
+      'toc-mode-slideout',
+      'toc-slideout-open'
+    ];
+
+    function isDesktopTOCViewport() {
+      return window.innerWidth > DESKTOP_TOC_BREAKPOINT;
+    }
+
+    function isSlideoutTOCViewport() {
+      return window.innerWidth >= TOC_SLIDEOUT_BREAKPOINT;
+    }
+
+    function detachTOCBindings(tocContainer) {
+      if (!tocContainer) return;
+
+      const resizeHandler = tocContainer.__tocResizeHandler;
+      if (typeof resizeHandler === 'function') {
+        window.removeEventListener('resize', resizeHandler);
+        delete tocContainer.__tocResizeHandler;
+      }
+
+      const tabClickHandler = tocContainer.__tocTabClickHandler;
+      const tabBtn = tocContainer.querySelector('.toc-slideout-tab');
+      if (typeof tabClickHandler === 'function' && tabBtn) {
+        tabBtn.removeEventListener('click', tabClickHandler);
+        delete tocContainer.__tocTabClickHandler;
+      }
+
+      const keydownHandler = tocContainer.__tocKeydownHandler;
+      if (typeof keydownHandler === 'function') {
+        document.removeEventListener('keydown', keydownHandler);
+        delete tocContainer.__tocKeydownHandler;
+      }
+
+      const scrollHandler = tocContainer.__tocScrollHandler;
+      if (typeof scrollHandler === 'function') {
+        window.removeEventListener('scroll', scrollHandler);
+        delete tocContainer.__tocScrollHandler;
+      }
+    }
+
+    function clearDesktopTOCReservation() {
+      TOC_LAYOUT_CLASSES.forEach((className) => document.body.classList.remove(className));
+    }
+
+    function setSlideoutOpen(tocContainer, isOpen) {
+      if (!tocContainer || !isSlideoutTOCViewport()) return;
+      tocContainer.classList.toggle('slideout-open', !!isOpen);
+      syncDesktopTOCReservation(tocContainer);
+    }
+
+    function syncDesktopTOCReservation(tocContainer) {
+      clearDesktopTOCReservation();
+      if (!tocContainer || !isDesktopTOCViewport()) return;
+
+      document.body.classList.add('has-desktop-toc');
+
+      if (isSlideoutTOCViewport()) {
+        document.body.classList.add('toc-mode-slideout');
+        tocContainer.classList.add('toc-slideout');
+        if (tocContainer.classList.contains('slideout-open')) {
+          document.body.classList.add('toc-slideout-open');
+        }
+        return;
+      }
+
+      document.body.classList.add('toc-mode-fixed-right');
+      tocContainer.classList.remove('toc-slideout', 'slideout-open');
+      if (tocContainer.classList.contains('collapsed')) {
+        document.body.classList.add('has-desktop-toc-collapsed');
+      }
+    }
+
+    function generateTOC(articleRoot) {
+      // Remove existing TOC (avoid duplicates on re-render)
+      const existing = document.querySelector('.article-toc');
+      detachTOCBindings(existing);
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+      clearDesktopTOCReservation();
+
+      // Check if we're on an article detail page
+      const articleContent =
+        articleRoot && articleRoot.nodeType === Node.ELEMENT_NODE
+          ? articleRoot
+          : document.querySelector('.article-content');
+      if (!articleContent) return;
+
+      // Find all headings (h1-h6) and ensure stable, link-friendly IDs.
+      const headings = assignHeadingIds(articleContent);
+      if (headings.length === 0) return;
+
+      // Create TOC container
+      const tocContainer = document.createElement('aside');
+      tocContainer.className = 'article-toc';
+      tocContainer.dataset.side = 'right';
+      tocContainer.setAttribute('role', 'complementary');
+      tocContainer.setAttribute('aria-label', '目录');
+
+      const slideoutTabBtn = document.createElement('button');
+      slideoutTabBtn.className = 'toc-slideout-tab';
+      slideoutTabBtn.setAttribute('type', 'button');
+      slideoutTabBtn.setAttribute('aria-label', '展开目录面板');
+      slideoutTabBtn.innerHTML = '<i class="fas fa-list-ul"></i><span>目录</span>';
+      tocContainer.appendChild(slideoutTabBtn);
+
+      // Create TOC header with close button for mobile
+      const tocHeader = document.createElement('div');
+      tocHeader.className = 'article-toc-header';
+      tocHeader.innerHTML = `
+          <div class="article-toc-heading">
+            <h3 class="article-toc-title">目录</h3>
+          </div>
+          <div class="toc-header-actions">
+            <button class="toc-collapse-btn" type="button" aria-label="收起目录" aria-expanded="true" title="收起目录">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+            <button class="toc-close-btn" type="button" aria-label="关闭目录">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+
+      // Create TOC list
+      const tocList = document.createElement('ul');
+      tocList.className = 'article-toc-list';
+      const tocLinkById = new Map();
+      const tocActiveLock = { id: null, until: 0 };
+
+      headings.forEach((heading) => {
+        const level = parseInt(heading.tagName.substring(1)); // h1 → 1, h2 → 2, etc.
+        const text = heading.textContent;
+        const id = heading.id;
+
+        const li = document.createElement('li');
+        li.className = `toc-item toc-level-${level}`;
+
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = text;
+        a.className = 'toc-link';
+        tocLinkById.set(id, a);
+
+        // Smooth scroll on click
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(id);
+          if (target) {
+            scrollToHeading(target, 'smooth');
+            history.replaceState(null, '', `#${encodeURIComponent(id)}`);
+            // Update active state
+            tocContainer.querySelectorAll('.toc-link').forEach(link => link.classList.remove('active'));
+            a.classList.add('active');
+            // Lock active style briefly to avoid first scroll frame snapping back.
+            tocActiveLock.id = id;
+            tocActiveLock.until = performance.now() + 480;
+            // Close mobile TOC drawer
+            tocContainer.classList.remove('mobile-open');
+          }
+        });
+
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+
+      tocContainer.appendChild(tocHeader);
+      tocContainer.appendChild(tocList);
+
+      // Insert TOC into document (floating, so body is fine)
+      const article = articleContent.closest('.article-detail') || document.querySelector('.article-detail');
+      const mountPoint = (article && article.parentNode) ? article.parentNode : document.body;
+      if (mountPoint) {
+        mountPoint.insertBefore(tocContainer, article || mountPoint.firstChild);
+      }
+
+      syncDesktopTOCReservation(tocContainer);
+
+      const onResize = () => {
+        if (!isSlideoutTOCViewport()) {
+          tocContainer.classList.remove('slideout-open');
+        }
+        syncDesktopTOCReservation(tocContainer);
+      };
+      tocContainer.__tocResizeHandler = onResize;
+      window.addEventListener('resize', onResize);
+
+      const collapseBtn = tocContainer.querySelector('.toc-collapse-btn');
+      const syncCollapseState = (collapsed) => {
+        if (!collapseBtn) return;
+        collapseBtn.setAttribute('aria-expanded', String(!collapsed));
+        collapseBtn.setAttribute('aria-label', collapsed ? '展开目录' : '收起目录');
+        collapseBtn.setAttribute('title', collapsed ? '展开目录' : '收起目录');
+        collapseBtn.innerHTML = collapsed
+          ? '<i class="fas fa-chevron-down"></i>'
+          : '<i class="fas fa-chevron-up"></i>';
+      };
+
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (isSlideoutTOCViewport()) return;
+          const collapsed = tocContainer.classList.toggle('collapsed');
+          syncCollapseState(collapsed);
+          syncDesktopTOCReservation(tocContainer);
+        });
+        syncCollapseState(false);
+      }
+
+      // Close button handler
+      const closeBtn = tocContainer.querySelector('.toc-close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          if (isSlideoutTOCViewport()) {
+            setSlideoutOpen(tocContainer, false);
+            return;
+          }
+          tocContainer.classList.remove('mobile-open');
+        });
+      }
+
+      const onTabClick = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!isSlideoutTOCViewport()) return;
+        setSlideoutOpen(tocContainer, !tocContainer.classList.contains('slideout-open'));
+      };
+      slideoutTabBtn.addEventListener('click', onTabClick);
+      tocContainer.__tocTabClickHandler = onTabClick;
+
+      const onTocKeydown = (event) => {
+        if (event.key !== 'Escape') return;
+        if (!isSlideoutTOCViewport()) return;
+        setSlideoutOpen(tocContainer, false);
+      };
+      document.addEventListener('keydown', onTocKeydown);
+      tocContainer.__tocKeydownHandler = onTocKeydown;
+
+      // Mobile TOC toggle button is now managed by Yew TocButton component
+      // This prevents the bug where the button persisted after leaving article pages
+
+      // Highlight current section on scroll
+      let ticking = false;
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateActiveTOC(headings, tocLinkById, tocActiveLock, tocContainer);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      tocContainer.__tocScrollHandler = onScroll;
+
+      // Initial highlight
+      updateActiveTOC(headings, tocLinkById, tocActiveLock, tocContainer);
+    }
+
+    // Update active TOC item based on scroll position
+    function updateActiveTOC(headings, tocLinkById, tocActiveLock, tocContainer) {
+      if (!Array.isArray(headings) || headings.length === 0) return;
+      const scope = tocContainer || document;
+
+      if (tocActiveLock && tocActiveLock.id && performance.now() < tocActiveLock.until) {
+        const lockedLink = tocLinkById?.get(tocActiveLock.id);
+        if (lockedLink) {
+          scope.querySelectorAll('.toc-link').forEach(link => link.classList.remove('active'));
+          lockedLink.classList.add('active');
+          return;
+        }
+      } else if (tocActiveLock && tocActiveLock.id) {
+        tocActiveLock.id = null;
+        tocActiveLock.until = 0;
+      }
+
+      // Keep highlight judgment consistent with scrollToHeading offset.
+      const scrollY = window.scrollY + getHeadingScrollOffset();
+
+      let currentHeading = null;
+      headings.forEach((heading) => {
+        const offsetTop = heading.offsetTop;
+        if (scrollY >= offsetTop) {
+          currentHeading = heading;
+        }
+      });
+
+      scope.querySelectorAll('.toc-link').forEach(link => link.classList.remove('active'));
+
+      if (currentHeading) {
+        const activeLink = tocLinkById?.get(currentHeading.id);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      }
+    }
+
+    // Back to top button is now managed by Yew ScrollToTopButton component
+
+    // Debug helper - expose to window for testing
+    window.debugMermaidCopy = function () {
+      console.log('=== Mermaid Download Debug ===');
+      console.log('Mermaid elements found:', document.querySelectorAll('.mermaid').length);
+      console.log('Mermaid wrappers found:', document.querySelectorAll('.mermaid-wrapper').length);
+      console.log('Download buttons found:', document.querySelectorAll('.mermaid-wrapper .copy-button').length);
+
+      const firstMermaid = document.querySelector('.mermaid');
+      if (firstMermaid) {
+        const svg = firstMermaid.querySelector('svg');
+        console.log('First mermaid has SVG:', !!svg);
+        if (svg) {
+          console.log('SVG dimensions:', svg.width.baseVal.value, 'x', svg.height.baseVal.value);
+        }
+        console.log('Has wrapper:', firstMermaid.parentElement?.classList.contains('mermaid-wrapper'));
+      }
+      console.log('============================');
+    };
+
+    // Expose TOC generator for components that may need to trigger it (e.g., mobile toggle)
+    window.generateTOC = generateTOC;
+
+    // Cleanup helper: remove existing TOC
+    window.cleanupTOC = function () {
+      const toc = document.querySelector('.article-toc');
+      detachTOCBindings(toc);
+      if (toc && toc.parentNode) {
+        toc.parentNode.removeChild(toc);
+      }
+      clearDesktopTOCReservation();
+    };
+
+    window.cleanupMarkdownRendering = function () {
+      window.cleanupTOC?.();
+      if (typeof window.__sfCloseMermaidFullscreen === 'function') {
+        try {
+          window.__sfCloseMermaidFullscreen(true);
+        } catch (_) {
+          window.__sfCloseMermaidFullscreen = null;
+        }
+      } else {
+        const overlay = document.querySelector('.mermaid-fullscreen-overlay');
+        if (overlay && overlay.parentNode) {
+          overlay.parentNode.removeChild(overlay);
+        }
+        document.body.style.overflow = '';
+      }
+    };
+  </script>
+</body>
+
+</html>
